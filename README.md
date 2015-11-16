@@ -16,11 +16,13 @@ The kernel driver gnkspi replaces the SPI driver that comes sith Win IoT. Note  
 2. Installing the driver
  - Run Power Shell and connect to your Rpi2 as documented in [Using PowerShell](http://ms-iot.github.io/content/en-US/win10/samples/PowerShell.htm).
  - cd to directory where driver files are located and do:
+ 
 		   devcon update .\gnkspi.inf ACPI\BCM2838
            Updating drivers for ACPI\BCM2838 from C:\Users\Gera\Documents\gnkspi.inf.
            Drivers installed successfully.`
     
  - Verify that driver is installed and started:
+ 
 		   devcon status ACPI\BCM2838
            ACPI\BCM2838\0
               Name: CNKSpi Driver
