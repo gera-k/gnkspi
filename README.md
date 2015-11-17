@@ -4,6 +4,7 @@ SPI driver and tools for Win10 IoT [Light Controller](https://www.hackster.io/ge
 - Rpi2 board running Windows 10 IoT build 10556.
 - Visual Studio 2015.
 - Windows Driver Kit 2015.
+- Node.js Tools for Visual Studio.
 
 ## Kernel driver
 The kernel driver gnkspi replaces the SPI driver that comes with Win IoT. Note that _standard_ SPI API becomes unavailable as soon as you install this driver.
@@ -60,4 +61,23 @@ The **gnkctl** command line utility allows testing of the kernel driver API. It 
  
  			.\gnkctl -d 0 stop
             
-    
+## NodeJS addon GnkSpiAddon.
+The addon provides driver API to JavaScript applicatons running under NodeJS.
+
+1. Compiling the addon.
+ - Select project **gnkaddon** and ensure that platform/configuration are set to **ARM** and **Release**.
+ - Rebuild the project. The addon binary GnkSpiAddon.node can be found in the Release subdirectory of the main solution directory.
+ - Copy the **GnkSpiAddon.node** to your Rpi2 board.
+ - Also copy test file test.json to Rpi2.
+
+2. Install NodeJS(Chakra) onto your Rpi2 board as documented in, say, this [sample](http://ms-iot.github.io/content/en-US/win10/samples/Nodejs.htm).
+
+3. Running tests
+ - Ensure that test.js and GnkSpiAddon.node are located in the same directory.
+ - run test.js under Node:
+ 
+ 				& "C:\Node.js (Chakra)\node.exe" test.js show0
+				& "C:\Node.js (Chakra)\node.exe" test.js show1
+				& "C:\Node.js (Chakra)\node.exe" test.js show2
+				& "C:\Node.js (Chakra)\node.exe" test.js stop
+
