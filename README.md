@@ -6,7 +6,7 @@ SPI driver and tools for Win10 IoT [Light Controller](https://www.hackster.io/ge
 - Windows Driver Kit 2015.
 
 ## Kernel driver
-The kernel driver gnkspi replaces the SPI driver that comes sith Win IoT. Note  that all _standard_ SPI API becomes unavailable as soon as you install this driver.
+The kernel driver gnkspi replaces the SPI driver that comes with Win IoT. Note that _standard_ SPI API becomes unavailable as soon as you install this driver.
 
 1. Compiling the driver.
  - Open the solution **gnkspi.sln** and select the **gnkspi** project. Make sure that platform is set to **ARM** and configuration to **Release**. 
