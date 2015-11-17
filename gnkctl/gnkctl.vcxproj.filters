@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="gnkctl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{f0d0fc62-485f-44b2-87e9-1a945a20d3a4}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{43d53063-6cd6-4056-823c-8c486af120a4}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="tclap">
+      <UniqueIdentifier>{e7e383dc-3d51-4089-b04c-4098fb1f54c3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\tclap\Arg.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\ArgException.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\ArgTraits.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\CmdLine.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\CmdLineInterface.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\CmdLineOutput.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\Constraint.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\DocBookOutput.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\HelpVisitor.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\IgnoreRestVisitor.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\MultiArg.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\MultiSwitchArg.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\OptionalUnlabeledTracker.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\StandardTraits.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\StdOutput.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\SwitchArg.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\UnlabeledMultiArg.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\UnlabeledValueArg.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\ValueArg.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\ValuesConstraint.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\VersionVisitor.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\Visitor.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\XorHandler.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tclap\ZshCompletionOutput.h">
+      <Filter>tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\Public.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\Trace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\Device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
