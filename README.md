@@ -11,24 +11,24 @@ The kernel driver gnkspi replaces the SPI driver that comes with Win IoT. Note t
 
 1. Compiling the driver.
  - Open the solution **gnkspi.sln** and select the **gnkspi** project. Make sure that platform is set to **ARM** and configuration to **Release**. 
- - Do Rebuild Project. Driver files will be put into ARM/Release directory. 
+ - Rebuild Project. Driver files will be put into ARM/Release directory. 
  - You need .sys and .inf files. Copy them into your Rpi2 into directory of your choice.
 
 2. Installing the driver
  - Run Power Shell and connect to your Rpi2 as documented in [Using PowerShell](http://ms-iot.github.io/content/en-US/win10/samples/PowerShell.htm).
  - cd to directory where driver files are located and do:
  
-		   devcon update .\gnkspi.inf ACPI\BCM2838
-           Updating drivers for ACPI\BCM2838 from C:\Users\Gera\Documents\gnkspi.inf.
-           Drivers installed successfully.`
+			devcon update .\gnkspi.inf ACPI\BCM2838
+			Updating drivers for ACPI\BCM2838 from C:\Users\Gera\Documents gnkspi.inf.
+			Drivers installed successfully.`
     
  - Verify that driver is installed and started:
  
-		   devcon status ACPI\BCM2838
-           ACPI\BCM2838\0
+		   	devcon status ACPI\BCM2838
+           	ACPI\BCM2838\0
               Name: CNKSpi Driver
               Driver is running.
-           1 matching device(s) found.
+           	1 matching device(s) found.
            
            
 ## gnkctl - driver test tool
@@ -49,20 +49,20 @@ The **gnkctl** command line utility allows testing of the kernel driver API. It 
 
  - to list available gnkspi devices:
  
- 			.\gnkctl list
-			List GNK devices
-			0: \\?\ACPI#BCM2838#0#{de0dbb94-7f49-415d-80f6-168b6872e2b3}
+			.\gnkctl list
+			  List GNK devices
+			  0: \\?\ACPI#BCM2838#0#{de0dbb94-7f49-415d-80f6-168b6872e2b3}
 
  - to start light show defined by a json file:
  
- 			.\gnkctl -d 0 show .\show1.json
+			.\gnkctl -d 0 show .\show1.json
 
  - to stop the show
  
  			.\gnkctl -d 0 stop
             
 ## NodeJS addon GnkSpiAddon.
-The addon provides driver API to JavaScript applicatons running under NodeJS.
+The addon provides driver API to JavaScript applications running under NodeJS.
 
 1. Compiling the addon.
  - Select project **gnkaddon** and ensure that platform/configuration are set to **ARM** and **Release**.
@@ -81,3 +81,40 @@ The addon provides driver API to JavaScript applicatons running under NodeJS.
 				& "C:\Node.js (Chakra)\node.exe" test.js show2
 				& "C:\Node.js (Chakra)\node.exe" test.js stop
 
+## NodeJS GUI
+A simple Web GUI allows some level of control from any modern WEB browser running on any device (such as PC/Tablet/Smartphone).
+
+#### Installing missing scripts
+Open the **ghkspi** solution and select **gnkts** project.
+ 
+1. Install the following node modules:
+ - express
+ - body-parser
+ - morgan
+2. Install the following TS type definitions:
+ - node
+ - express
+ - body-parser
+ - morgan
+ - es6-promise
+
+#### Building the GUI
+The GUI is written in TypeScript so the project must be built before it can be deployed to Rpi2. Open the **ghkspi** solution and select **gnkts** project. Rebuild it. It is possible to run it in a browser on your development PC. The app will use light fixture emulator instead of real hardware. The emulator just prints out all received commands to the console.
+
+#### Deploying the GUI to RPi2
+Select directory on your Rpi2 board where **GnkSpiAddon.node** and create sub-directory **gnkts**. Copy the following files into **gnkts**:
+
+- *.js
+- public/*
+- node_modules/*
+
+#### Running the GUI
+- Open PowerShell session to your Rpi2.
+- cd to **gnkts** directory.
+- run the server app:
+					
+		"C:\Node.js (Chakra)\node.exe" server.js
+
+- The server should start listening on port 1337. Open a browser and point it to IP address of your Rpi2, port 1337.
+
+![](Readme1.png)
