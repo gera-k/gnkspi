@@ -14,8 +14,6 @@
 
 <body>
     <div id="color-pick" class="ui-widget-content">
-        <h2 id="header" class="ui-widget-header">Light controller</h2>
-
         <div id="color-top" class="ui-widget-content">
             <div id="color-slider" class="ui-widget-content">
                 <div id="red"></div>
@@ -23,7 +21,9 @@
                 <div id="blue"></div>
             </div>
             <div id="color-swatch" class="ui-widget-content">
-                <div id="swatch" class="ui-widget-content ui-corner-all"></div>
+                <canvas id="swatch">
+                    Your browser does not support HTML5 Canvas.
+                </canvas>
                 <input id="value" class="ui-widget-content ui-corner-all">
             </div>
         </div>

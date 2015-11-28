@@ -22,6 +22,8 @@ class LightStar extends Show {
     static ledCount = [15, 25, 15, 30, 20, 30, 20, 30, 15, 25, 15];
     static rayToRow = [0,  0,  2, 1,  0,  2,  3,  1, 2,  3, 3];
     static startLed = [0, 15, 45, 0, 40, 15, 40, 30, 0, 15, 0];
+    static maxLedsPerRay = 30;
+    static maxLeds = 240;
 
     private static getRowLed(ray: number, led: number): { r: number, l: number } {
 

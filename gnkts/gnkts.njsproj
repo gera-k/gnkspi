@@ -39,8 +39,11 @@
   <ItemGroup>
     <Content Include="public\gnkts\style.css" />
     <Content Include="public\index.html" />
+    <Content Include="Scripts\tsd.json" />
+    <Content Include="test.ps1" />
     <TypeScriptCompile Include="GnkSpi.ts" />
     <TypeScriptCompile Include="LightStar.ts" />
+    <TypeScriptCompile Include="Scripts\typings\tsd.d.ts" />
     <TypeScriptCompile Include="server.ts" />
     <Content Include="package.json" />
     <TypeScriptCompile Include="Show.ts" />
@@ -50,6 +53,8 @@
     <Folder Include="public\" />
     <Folder Include="public\gnkts\" />
     <Folder Include="public\jquery\" />
+    <Folder Include="Scripts\" />
+    <Folder Include="Scripts\typings\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="public\gnkts\light.js" />

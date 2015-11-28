@@ -1,10 +1,8 @@
 html, body {
     width: 100%;
     height: 98%;
-    min-width: 400px; 
-    min-height: 300px; 
     max-width: 1200px; 
-    max-height: 800px; 
+    max-height: 600px; 
     margin: 0px;
 }
 
@@ -14,48 +12,42 @@ html, body {
     padding: 0.5em; 
 }
 
-#color-pick h2 { 
-    width: 100%;
-    height: 13%;
-    text-align: center; 
-    margin: 0; 
-}
-
 #color-top {
     width: 100%;
-    height: 62%;
+    height: 80%;
     border:none;
 }
 
 #color-bottom {
     width: 100%;
-    height: 20%;
+    height: 15%;
     border:none;
 }
 
 #color-slider {
     float: left;
     clear: left;
-    width: 63%;
+    width: 50%;
     height: 100%;
+    margin-top: 3%;
     border:none;
     text-align: center; 
 }
 
 #color-swatch {
     float: right;
-    width: 33%;
+    width:50%;
     height: 100%;
-    margin-right: 3%;
     border:none;
+    text-align: center;
 }
 
 #red, #green, #blue {
     width: auto;
-    height: 28%;
-    margin-left: 5%;
-    margin-top: 3%;
-    margin-bottom: 3%;
+    height: 20%;
+    margin-left: 2%;
+    margin-top: 7%;
+    margin-bottom: 7%;
 }
 
 #red {
@@ -64,10 +56,10 @@ html, body {
 
 #intensity {
     width: auto;
-    height: 85%;
-    margin-top: 15px;
-    margin-left: 3%;
-    margin-right: 3%;
+    height: 96%;
+    margin-top: 1%;
+    margin-left: 1%;
+    margin-right: 2%;
 }
 
 #red .ui-slider-handle, 
@@ -80,22 +72,19 @@ html, body {
 }
 
 #swatch {
-    width: 95%;
+    width: 100%;
     height: 70%;
-    margin-left: 10px;
     margin-top: 10px;
-    margin-right: 5%;
     background-image: none;
 }
 
 #value {
-    width: 95%;
-    height: auto;
-    margin-left: 10px;
-    margin-top: 7%;
-    margin-right: 5%;
+    width: 60%;
+    height: 16%;
+    margin-top: 5%;
     text-align: center;
     vertical-align: middle;
+    border:none;
 }
 
 #red .ui-slider-range {
