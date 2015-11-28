@@ -91,6 +91,7 @@ Open the **ghkspi** solution and select **gnkts** project.
  - express
  - body-parser
  - morgan
+ - rainbowvis.js
 2. Install the following TS type definitions:
  - node
  - express
@@ -117,4 +118,14 @@ Select directory on your Rpi2 board where **GnkSpiAddon.node** and create sub-di
 
 - The server should start listening on port 1337. Open a browser and point it to IP address of your Rpi2, port 1337.
 
-![](Readme1.png)
+![](Readme2.png)
+
+#### Demo script
+As the GUI capabilities are currently limited, a PowerShell script was created to demo various static and dynamic shows the light fixture itself is capable of. Of course the script only demonstrates a few shows, the controller capabilities are virtually unlimited.
+
+- copy the script **test.ps1** to Rpi2 into **gnkts** directory
+- run it:
+
+		.\test.ps1
+
+- enjoy the show..
