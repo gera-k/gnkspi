@@ -4,7 +4,7 @@
     "refresh": number,              // refresh interval in 10 ms units
     "frame": [                      // array of frames
         {                           //      frame object
-            "format" : string,      //          format: "base", "transition"
+            "format" : string,      //          format: "base", "update", "transition"
             "duration" : number,    //          step duration in refresh intervals
             "repeat" : number,      //          repeat count
             "row": [                //          array of rows, each row either object or array
@@ -27,7 +27,7 @@
 
 */
 
-enum Format { base, transition };
+enum Format { base, update, transition };
 
 class Show {
     static defaultRowCount = 4;
@@ -97,12 +97,12 @@ class Show {
         return this.show.frame.length - 1;
     }
 
-    // add zero-filled transition frame
+    // add zero-filled update frame
     //  with rows formatted as array
     //  returns frame index
-    addTransitionFrame(options = Show.defaulOptions): number {
+    addUpdateFrame(options = Show.defaulOptions): number {
 
-        var frame = Show.newFrame(Format.transition, options);
+        var frame = Show.newFrame(Format.update, options);
 
         for (var r = 0; r < options.rowCount; r++) {
             var row = Array<string>(options.ledCount);

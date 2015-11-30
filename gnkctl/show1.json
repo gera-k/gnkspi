@@ -13,7 +13,7 @@
       ]
     },
     {
-      "format" : "transition",
+      "format" : "update",
       "duration" : 5,
       "repeat" : 100,
       "row" : [

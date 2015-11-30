@@ -280,6 +280,8 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
 
             if (!formatStr.compare("base"))
                 format = GNKSPI_FRAME_BASE;
+            else if (!formatStr.compare("update"))
+                format = GNKSPI_FRAME_UPDATE;
             else if (!formatStr.compare("transition"))
                 format = GNKSPI_FRAME_TRANSITION;
             else

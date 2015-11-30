@@ -58,11 +58,11 @@ DEFINE_GUID (GUID_DEVINTERFACE_gnkspi,
 typedef enum _GNKSPI_FRAME_FORMAT
 {
     GNKSPI_FRAME_INVALID = 0,
-    GNKSPI_FRAME_BASE,           // base frame data
-                                //  frame is calculated once then displayed for duration * repeat count * REFRESH_UNIT msec
-    GNKSPI_FRAME_TRANSITION,     // previous frame update
-                                //  current frame displayed for 'duration' units then new frame is calculated
-                                //  process is repeated 'repeat' times                          
+
+    GNKSPI_FRAME_BASE,          // base frame data
+    GNKSPI_FRAME_UPDATE,        // previous frame update
+    GNKSPI_FRAME_TRANSITION,    // linear interpolation target
+                                
     GNKSPI_FRAME_MAX_FORMAT
 } GNKSPI_FRAME_FORMAT;
 
@@ -86,18 +86,27 @@ typedef enum _GNKSPI_FRAME_FORMAT
 //                      - led count
 //                      - ...
 //                  Notes: 
-//                      - FRAME is static so total step duration is 'duration' * 'repeat count'
+//                      - FRAME is static so total frame duration is 'duration' * 'repeat count'
 //
-//              format TRANSITION - contains LED update for all rows and leds as defined by the last frame
+//              format UPDATE - contains LED update for all rows and leds as defined by the last frame
 //                  - led update - 3 signed bytes for each led in the last FRAME
 //                  - ...
 //                  Notes:
-//                      - transition is applied to surrent frame being displayed
-//                      - transition is applied every 'duration' cycles
+//                      - update is applied to current frame being displayed
+//                      - update is applied every 'duration' cycles
 //                      - step is repeated 'repeat count' times so after its applied last time,
 //                          the LED values differ from initial values by 'repeat count' * 'led update'
 //                      - each LED is updated individually as signed byte addition, carry bit is ignored
-//                      - total step duration is 'duration' * 'repeat count'
+//                      - total frame duration is 'duration' * 'repeat count'
+//
+//              format TRANSITION - contains destination LED values for linear interpolation
+//                  - led value - 3 bytes for each led in the last FRAME
+//                  - ...
+//                  Notes:
+//                      - update is applied to last FRAME
+//                      - 'repeat count' is number of steps in transition
+//                      - each step is displayed during 'duration' refresh cycles               
+//                      - total frame duration is 'duration' * 'repeat count'
 //
 //              format X - TBD
 //      - step 1

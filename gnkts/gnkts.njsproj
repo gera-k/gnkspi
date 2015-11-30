@@ -6,8 +6,7 @@
     <Name>gnkts</Name>
     <RootNamespace>gnkts</RootNamespace>
     <Environment>GNK_DEBUG=YES</Environment>
-    <ScriptArguments>
-    </ScriptArguments>
+    <ScriptArguments>pgrad 20 "#000000" "#FFFFFF"</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -15,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>2ca86b1d-7cc1-4eec-9f79-7d133aa4058c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>server.js</StartupFile>
+    <StartupFile>test.js</StartupFile>
     <StartWebBrowser>True</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -42,7 +41,9 @@
     <Content Include="Scripts\tsd.json" />
     <Content Include="test.ps1" />
     <TypeScriptCompile Include="GnkSpi.ts" />
+    <TypeScriptCompile Include="Gradient.ts" />
     <TypeScriptCompile Include="LightStar.ts" />
+    <TypeScriptCompile Include="ColorUtil.ts" />
     <TypeScriptCompile Include="Scripts\typings\tsd.d.ts" />
     <TypeScriptCompile Include="server.ts" />
     <Content Include="package.json" />

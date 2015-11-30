@@ -567,6 +567,22 @@ gnkspiSetShowStream(
             break;
         }
 
+        case GNKSPI_FRAME_UPDATE:
+        {
+            Tr1("  Format: UPDATE  byteCount %d", byteCount);
+
+            if (l < byteCount)
+            {
+                Err("Stream is too short - %d bytes left, %d expected", l, byteCount);
+                goto RetErr;
+            }
+
+            p += byteCount;
+            l -= byteCount;
+
+            break;
+        }
+
         case GNKSPI_FRAME_TRANSITION:
         {
             Tr1("  Format: TRANSITION  byteCount %d", byteCount);
@@ -615,6 +631,12 @@ gnkspiShow0Start(
     WdfTimerStart(deviceContext->refreshTimer, WDF_REL_TIMEOUT_IN_MS(GNKSPL_REFRESH_UNIT));
 }
 
+static inline SHORT 
+interpolate(SHORT range, USHORT position, USHORT count)
+{
+    return (SHORT)(range * position / count);
+}
+
 VOID
 gnkspiShow0Next(
     _In_ PDEVICE_CONTEXT deviceContext
@@ -633,7 +655,6 @@ gnkspiShow0Next(
     deviceContext->stepDuration = 1;
 
     // if repeat counter expired, go to next step
-    //  note that next step will be selected on next refresh
     if (deviceContext->stepRepeat >= step->repeat)
     {
         deviceContext->stepRepeat = 0;
@@ -641,20 +662,15 @@ gnkspiShow0Next(
         deviceContext->step++;
         if (deviceContext->step >= deviceContext->showStepCount)
             deviceContext->step = 0;
-    }
 
+        step = &deviceContext->showStep[deviceContext->step];
+    }
+    
     // update repeat counter
     deviceContext->stepRepeat++;
 
     // recalculate frame
-    ULONG* oldFrame;
-    ULONG* newFrame;
-
-    oldFrame = deviceContext->currFrame;
-    if (oldFrame == NULL || oldFrame == deviceContext->showFrame2)
-        newFrame = deviceContext->showFrame2;
-    else
-        newFrame = deviceContext->showFrame1;
+    ULONG* newFrame = NULL;
 
     // locate step data
     BYTE* p = (BYTE*)WdfMemoryGetBuffer(deviceContext->showStream, NULL) + step->offset;
@@ -666,14 +682,12 @@ gnkspiShow0Next(
     {
     case GNKSPI_FRAME_BASE:
     {
-        // only calculate on very first repetition
-//        if (deviceContext->stepRepeat != 1)
-//            break;
+        newFrame = deviceContext->showFrame1;
 
         rowCount = *p++;
 
-        Tr3("SHOW_FRAME  row count %d", rowCount);
-        
+        Tr3("FRAME_BASE  row count %d  repeat %d", rowCount, deviceContext->stepRepeat);
+
         for (BYTE row = 0; row < rowCount; row++)
         {
             ULONG* r = newFrame + row * GNKSPL_MAX_LED_COUNT;
@@ -692,15 +706,21 @@ gnkspiShow0Next(
         break;
     }
 
-    case GNKSPI_FRAME_TRANSITION:
+    case GNKSPI_FRAME_UPDATE:
     {
+        ULONG* oldFrame = deviceContext->currFrame;
+
         if (oldFrame == NULL)
             break;
+        if (oldFrame == deviceContext->showFrame2)
+            newFrame = deviceContext->showFrame2;
+        else
+            newFrame = deviceContext->showFrame1;
 
         rowCount = deviceContext->currRowCount;
         RtlCopyMemory(ledCount, deviceContext->currLedCount, sizeof(ledCount));
 
-        Tr3("SHOW_TRANSITION  row count %d", rowCount);
+        Tr3("FRAME_UPDATE  row count %d", rowCount);
 
         for (BYTE row = 0; row < rowCount; row++)
         {
@@ -722,6 +742,48 @@ gnkspiShow0Next(
                 nr[led] = ((ULONG)G << 16) | ((ULONG)R << 8) | ((ULONG)B << 0);
             }
         }
+
+        break;
+    }
+
+    case GNKSPI_FRAME_TRANSITION:
+    {
+        ULONG* baseFrame = deviceContext->showFrame1;
+        newFrame = deviceContext->showFrame2;
+
+        rowCount = deviceContext->currRowCount;
+        RtlCopyMemory(ledCount, deviceContext->currLedCount, sizeof(ledCount));
+
+        Tr3("FRAME_TRANSITION  row count %d  repeat %d", rowCount, deviceContext->stepRepeat);
+
+        for (BYTE row = 0; row < rowCount; row++)
+        {
+            ULONG* br = baseFrame + row * GNKSPL_MAX_LED_COUNT;
+            ULONG* nr = newFrame + row * GNKSPL_MAX_LED_COUNT;
+
+            for (BYTE led = 0; led < ledCount[row]; led++)
+            {
+                ULONG l = br[led];
+
+                SHORT R = (l >> 8) & 0xFF;
+                SHORT G = (l >> 16) & 0xFF;
+                SHORT B = (l >> 0) & 0xFF;
+
+                SHORT nR = *p++;
+                SHORT nG = *p++;
+                SHORT nB = *p++;
+
+                R += interpolate(nR - R, deviceContext->stepRepeat, step->repeat);
+                G += interpolate(nG - G, deviceContext->stepRepeat, step->repeat);
+                B += interpolate(nB - B, deviceContext->stepRepeat, step->repeat);
+
+                nr[led] = ((ULONG)(G & 0xFF) << 16) | ((ULONG)(R & 0xFF) << 8) | ((ULONG)(B & 0xFF) << 0);
+            }
+        }
+
+        // on last step copy transition result into base frame
+        if (deviceContext->stepRepeat == step->repeat)
+            memcpy(baseFrame, newFrame, GNKSPL_MAX_ROW_COUNT * GNKSPL_MAX_LED_COUNT * sizeof(ULONG));
 
         break;
     }

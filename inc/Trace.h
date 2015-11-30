@@ -167,7 +167,7 @@ static __inline void TrH
 
     if (MSG_TR3 <= DBG_LEVEL)
 
-    Tr3("%s addr %p size 0x%X:", Header, Buffer, (unsigned)Length);
+    Tr3("%s addr %p size 0x%X(%d):", Header, Buffer, (unsigned)Length, (unsigned)Length);
 
     while (Length>0)
     {

@@ -18,7 +18,7 @@ var show0 = {
       ]
     },
     {
-      "format" : "transition",
+      "format" : "update",
       "duration" : 1,
       "repeat" : 255,
       "row" : [
@@ -29,7 +29,7 @@ var show0 = {
       ]
     },
     {
-      "format" : "transition",
+      "format" : "update",
       "duration" : 1,
       "repeat" : 255,
       "row" : [

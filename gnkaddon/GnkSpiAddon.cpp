@@ -102,8 +102,7 @@ void Show(const FunctionCallbackInfo<Value>& args)
     String::Utf8Value arg0(args[0]->ToString());
     std::string str(*arg0);
 
-    if (optVerbose)
-        Msg("show <%s>", str.c_str());
+    Tr1("show <%s>", str.c_str());
 
     std::stringstream stream;
     int rc = parseJson(str, stream);
@@ -121,11 +120,11 @@ void Show(const FunctionCallbackInfo<Value>& args)
 
     if (dev >= 0)
     {
-        if (optVerbose)
-            Msg("output to device %d", dev);
-
         size_t size = s.size();
         uint8_t* buf = new uint8_t[size];
+
+        if (optVerbose)
+            Msg("output %d bytes to device %d", size, dev);
 
         memcpy(buf, s.c_str(), size);
 
