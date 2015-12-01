@@ -6,7 +6,7 @@
     <Name>gnkts</Name>
     <RootNamespace>gnkts</RootNamespace>
     <Environment>GNK_DEBUG=YES</Environment>
-    <ScriptArguments>pgrad 20 "#000000" "#FFFFFF"</ScriptArguments>
+    <ScriptArguments>wave 1 "#800000" "#00A000" 50 1 2 5</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>

@@ -82,20 +82,18 @@ switch (process.argv[2]) {
 
         var ls = new LightStar(10);
         var f = ls.addBaseFrame();
-        var g = new Gradient(LightStar.maxLeds, args);
+        var g = new Gradient(LightStar.rayCount, args);
 
         var cnt = 0;
         for (var ray = 0; ray < LightStar.rayCount; ray++) {
-            for (var led = 0; led < LightStar.ledCount[ray]; led++) {
-                ls.setLed(f, ray, led, g.getColor(cnt++));
-            }
+            ls.setRay(f, ray, g.getColor(cnt++));
         }
 
         gnkspi.Show(ls.asString(), 0, -1);
 
         break;
 
-    case "cir":                // cir repeat [<color> ...]
+    case "ring":                // ring repeat [<color> ...]
         if (process.argv.length < 4) {
             Msg(`process.argv.length ${process.argv.length}  expected 4 or more`);
             break;
@@ -111,24 +109,20 @@ switch (process.argv[2]) {
 
         var ls = new LightStar(10);
         var f = ls.addBaseFrame();
-        var g = new Gradient(LightStar.maxLeds, args);
+        var g = new Gradient(LightStar.maxLedsPerRay, args);
 
         var cnt = 0;
         for (var led = 0; led < LightStar.maxLedsPerRay; led++) {
-            for (var ray = 0; ray < LightStar.rayCount; ray++) {
-                if (led < LightStar.ledCount[ray]) {
-                    ls.setLed(f, ray, led, g.getColor(cnt++));
-                }
-            }
+            ls.setRing(f, led, g.getColor(cnt++));
         }
 
         gnkspi.Show(ls.asString(), 0, -1);
 
         break;
 
-    case "upd":                // upd <refresh> <color> [ <duration> <repeat> <diff> ] []
+    case "upd":                // upd <refresh> <color> [ <duration> <repeat> <diff> ...]
         if (process.argv.length < 5) {
-            Msg(`process.argv.length ${process.argv.length}  expected 4`);
+            Msg(`process.argv.length ${process.argv.length}  expected 5`);
             break;
         }
 
@@ -139,11 +133,7 @@ switch (process.argv[2]) {
         var ls = new LightStar(ref);
         var f = ls.addBaseFrame();
 
-        for (var ray = 0; ray < LightStar.rayCount; ray++) {
-            for (var led = 0; led < LightStar.ledCount[ray]; led++) {
-                ls.setLed(f, ray, led, col);
-            }
-        }
+        ls.setFrame(f, col);
 
         while ((arg + 3) <= process.argv.length) {
             var dur = Number(process.argv[arg++]);
@@ -151,26 +141,21 @@ switch (process.argv[2]) {
             col = process.argv[arg++];
 
             f = ls.addUpdateFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null });
-
-            for (var ray = 0; ray < LightStar.rayCount; ray++) {
-                for (var led = 0; led < LightStar.ledCount[ray]; led++) {
-                    ls.setLed(f, ray, led, col);
-                }
-            }
+            ls.setFrame(f, col);
         }
 
         gnkspi.Show(ls.asString(), 0, -1);
 
         break;
 
-    case "ring":                 // ring <refresh> <color> [ <dur> <rep> <add> <sub>] 
+    case "fring":                 // fring <refresh> <color> [ <dur> <rep> <add> <sub>] 
         if (process.argv.length < 6) {
             Msg(`process.argv.length ${process.argv.length}  expected 6`);
             break;
         }
 
         var ref = Number(process.argv[3]);
-        var srgb = ColorUtil.strToRgb(process.argv[4]);
+        var col = process.argv[4];
         var arg = 5;
         var mul = .95;
 
@@ -178,15 +163,7 @@ switch (process.argv[2]) {
         var f = ls.addBaseFrame();
 
         // fill base frame
-        var rgb = srgb;
-        for (var led = 0; led < 30; led++) {
-            for (var ray = 0; ray < LightStar.rayCount; ray++) {
-                if (led < LightStar.ledCount[ray]) {
-                    ls.setLed(f, ray, led, ColorUtil.rgbToStr(rgb));
-                }
-            }
-            //rgb.forEach((v: number, i: number, a: number[]) => { a[i] = v * mul });
-        }
+        ls.setFrame(f, col);
 
         var wl = 3;
         var inc = -wl + 1;
@@ -222,52 +199,88 @@ switch (process.argv[2]) {
 
         break;
 
-    case "grad":                        // grad <speed> <repeat> <color> [<color> ...]
-        if (process.argv.length < 7) {
-            Msg(`process.argv.length ${process.argv.length}  expected 7`);
+    case "tran":                    // tran  <refresh> <color> [ <duration> <repeat> <color> ...]
+        if (process.argv.length < 5) {
+            Msg(`process.argv.length ${process.argv.length}  expected 5`);
             break;
         }
 
-        if (speed < 1)
-            speed = 1;
-        if (speed > 100)
-            speed = 100;
-        speed--;
+        var ref = Number(process.argv[3]);
+        var col = process.argv[4];
+        var arg = 5;
 
-        var args = [];
-        var speed = Number(process.argv[3]);
-        var repeat = Number(process.argv[4]);
-        while (repeat-- > 0) {
-            arg = 5;
-            while (arg < process.argv.length)
-                args.push(process.argv[arg++]);
+        var ls = new LightStar(ref);
+
+        ls.setFrame(ls.addBaseFrame(), col);
+
+        while ((arg + 3) <= process.argv.length) {
+            var dur = Number(process.argv[arg++]);
+            var rep = Number(process.argv[arg++]);
+            col = process.argv[arg++];
+
+            ls.setFrame(ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null }), col);
         }
 
-        var refresh = 10 - Math.floor(speed/10);
-        var steps = 30;
-        var duration = 10 - Math.floor(speed%10);
-        var repeat = 1;
+        gnkspi.Show(ls.asString(), 0, -1);
 
-        Msg(`refresh: ${refresh}  steps: ${steps}  duration: ${duration}  repeat ${repeat}`);
+        break;
 
-        var ls = new LightStar(refresh);
-        var g = new Gradient(steps * repeat, args);
-
-        // base frame
-        var cnt = 0;
-        var f = ls.addBaseFrame();
-        for (var ray = 0; ray < LightStar.rayCount; ray++) {
-            for (var led = 0; led < LightStar.ledCount[ray]; led++) {
-                ls.setLed(f, ray, led, g.getColor(cnt));
-            }
+    case "wave": {      // wave <refresh> <bcolor> <wcolor> <wspeed> <wlen> [<rlen> [<flen>]]
+        if (process.argv.length < 8) {
+            Msg(`process.argv.length ${process.argv.length}  expected 8 or more`);
+            break;
         }
 
-        while (++cnt < steps) {
-            f = ls.addUpdateFrame({ duration: duration, repeat: repeat, rowCount: null, ledCount: null });
+        var arg = 3;
+        var ref = Number(process.argv[arg++]);
+        var bcol = process.argv[arg++];
+        var wcol = process.argv[arg++];
+        var wspd = Number(process.argv[arg++]);
+        var wlen = Number(process.argv[arg++]);
+        var rlen = wlen;
+        var flen = wlen;
+        if (arg < process.argv.length)
+            rlen = Number(process.argv[arg++]);
+        if (arg < process.argv.length)
+            flen = Number(process.argv[arg++]);
 
-            for (var ray = 0; ray < LightStar.rayCount; ray++) {
-                for (var led = 0; led < LightStar.ledCount[ray]; led++) {
-                    ls.setLed(f, ray, led, g.getStep(cnt));
+        // wspeed parameter must be in 1..100 range
+        if (wspd < 1)
+            wspd = 1;
+        if (wspd > 100)
+            wspd = 100;
+        wspd--;
+
+        // rasing edge gradient
+        var rg = new Gradient(rlen, [bcol, wcol]);
+
+        // falling edge gradient
+        var fg = new Gradient(flen, [wcol, bcol]);
+
+        // create light and add base frame filled with base color
+        var ls = new LightStar(ref);
+        ls.setFrame(ls.addBaseFrame(), bcol);
+
+        var wmax = LightStar.maxLedsPerRay + rlen + wlen + flen;
+
+        // calculate transition duration/repeat from wave speed
+        var dur = 1;
+        var rep = 100 - wspd;
+        
+        // add transition frame for each wave position
+        for (var w = 0; w < wmax; w++) {
+            var f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null })
+
+            for (var r = 0; r < LightStar.rayCount; r++) {
+                for (var l = 0; l < LightStar.ledCount[r]; l++) {
+                    if (l <= w && l > w - rlen) // rasing edge
+                        ls.setLed(f, r, l, rg.getColor(w - l));
+                    else if (l <= w - rlen && l > w - rlen - wlen)  // wave
+                        ls.setLed(f, r, l, wcol);
+                    else if (l <= w - rlen - wlen && l > w - rlen - wlen - flen) // falling edge
+                        ls.setLed(f, r, l, fg.getColor(w - rlen - wlen - l));
+                    else
+                        ls.setLed(f, r, l, bcol);
                 }
             }
         }
@@ -275,6 +288,7 @@ switch (process.argv[2]) {
         gnkspi.Show(ls.asString(), 0, -1);
 
         break;
+    }
 
     case "stop":
         Msg(`Stop: ${gnkspi.Stop(0)}`);

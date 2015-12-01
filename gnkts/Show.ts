@@ -116,6 +116,25 @@ class Show {
         return this.show.frame.length - 1;
     }
 
+    // add zero-filled transition frame
+    //  with rows formatted as array
+    //  returns frame index
+    addTransitionFrame(options = Show.defaulOptions): number {
+
+        var frame = Show.newFrame(Format.transition, options);
+
+        for (var r = 0; r < options.rowCount; r++) {
+            var row = Array<string>(options.ledCount);
+            for (var l = 0; l < options.ledCount; l++)
+                row[l] = "#000000";
+            frame.row.push(row);
+        }
+
+        this.show.frame.push(frame);
+
+        return this.show.frame.length - 1;
+    }
+
     // add a frame filled with same led color
     //  led: led value
     //  option defaults:

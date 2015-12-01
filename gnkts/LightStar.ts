@@ -48,12 +48,64 @@ class LightStar extends Show {
         if (led >= LightStar.ledCount[ray])
             return;
 
-        var rl = LightStar.getRowLed(ray, led);
-
         var f = this.show.frame[frame];
+        var rl = LightStar.getRowLed(ray, led);
         var r = f['row'][rl.r];
         if (Array.isArray(r)) {
             r[rl.l] = color;
+        }
+    }
+
+    setRay(frame: number, ray: number, color: string) {
+
+        if (frame >= this.show.frame.length)
+            return;
+
+        if (ray >= LightStar.rayCount)
+            return;
+
+        var f = this.show.frame[frame];
+        var rl = LightStar.getRowLed(ray, 0);
+        var r = f['row'][rl.r];
+        if (Array.isArray(r)) {
+            for (var l = 0; l < LightStar.ledCount[ray]; l++)
+                r[rl.l + l] = color;
+        }
+    }
+
+    setRing(frame: number, ring: number, color: string) {
+
+        if (frame >= this.show.frame.length)
+            return;
+
+        if (ring >= LightStar.maxLedsPerRay)
+            return;
+
+        var f = this.show.frame[frame];
+        for (var ray = 0; ray < LightStar.rayCount; ray++) {
+            if (ring >= LightStar.ledCount[ray])
+                continue;
+
+            var rl = LightStar.getRowLed(ray, ring);
+            var r = f['row'][rl.r];
+            if (Array.isArray(r)) {
+                r[rl.l] = color;
+            }
+        }
+    }
+
+    setFrame(frame: number, color: string) {
+        if (frame >= this.show.frame.length)
+            return;
+
+        var f = this.show.frame[frame];
+        for (var ray = 0; ray < LightStar.rayCount; ray++) {
+            var rl = LightStar.getRowLed(ray, 0);
+            var r = f['row'][rl.r];
+            if (Array.isArray(r)) {
+                for (var l = 0; l < LightStar.ledCount[ray]; l++)
+                    r[rl.l + l] = color;
+            }
         }
     }
 }
