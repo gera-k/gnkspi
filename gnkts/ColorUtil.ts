@@ -1,4 +1,5 @@
 ﻿// color conversions
+"use strict";
 
 class ColorUtil {
 

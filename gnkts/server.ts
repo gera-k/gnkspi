@@ -1,4 +1,6 @@
-﻿import GnkSpi = require('./GnkSpi');
+﻿"use strict";
+
+import GnkSpi = require('./GnkSpi');
 import Show = require('./Show');
 
 var GnkDebug = false;

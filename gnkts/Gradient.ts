@@ -1,4 +1,6 @@
-﻿import ColorUtil = require('./ColorUtil');
+﻿"use strict";
+
+import ColorUtil = require('./ColorUtil');
 
 function interpolate(range: number, position: number, count: number) {
     return Math.round(range * position / count);

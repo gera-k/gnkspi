@@ -24,7 +24,7 @@
     <RootNamespace>GnkSpiAddon</RootNamespace>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -74,7 +74,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -94,7 +94,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>CfgMgr32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;node.lib;chakrart.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\ia32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\ia32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AllowIsolation>true</AllowIsolation>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -105,13 +105,13 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NODE_GYP_MODULE_NAME=GnkSpiAddon;NODE_ENGINE="chakra";NODE_ENGINE_CHAKRA=1;WIN32;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;BUILDING_V8_SHARED=1;BUILDING_UV_SHARED=1;BUILDING_NODE_EXTENSION;USE_EDGEMODE_JSRT=1;DEBUG;_DEBUG;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -131,7 +131,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>CfgMgr32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;node.lib;chakrart.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\arm;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\arm;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AllowIsolation>true</AllowIsolation>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -141,13 +141,13 @@
       <TargetExt>.node</TargetExt>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NODE_GYP_MODULE_NAME=GnkSpiAddon;NODE_ENGINE="chakra";NODE_ENGINE_CHAKRA=1;WIN32;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;BUILDING_V8_SHARED=1;BUILDING_UV_SHARED=1;BUILDING_NODE_EXTENSION;USE_EDGEMODE_JSRT=1;DEBUG;_DEBUG;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -175,7 +175,7 @@
     </Lib>
     <Link>
       <AdditionalDependencies>CfgMgr32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;node.lib;chakrart.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\ia32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\ia32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AllowIsolation>true</AllowIsolation>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -189,13 +189,13 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NODE_GYP_MODULE_NAME=GnkSpiAddon;NODE_ENGINE="chakra";NODE_ENGINE_CHAKRA=1;WIN32;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;BUILDING_V8_SHARED=1;BUILDING_UV_SHARED=1;BUILDING_NODE_EXTENSION;USE_EDGEMODE_JSRT=1;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -223,7 +223,7 @@
     </Lib>
     <Link>
       <AdditionalDependencies>CfgMgr32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;DelayImp.lib;node.lib;chakrart.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\arm;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\arm;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AllowIsolation>true</AllowIsolation>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -236,7 +236,7 @@
       <TargetExt>.node</TargetExt>
     </Link>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Node.js (chakra)\sdk\src;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\uv\include;C:\Program Files (x86)\Node.js (chakra)\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\NodejsUwp\Console\sdk\src;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\uv\include;C:\Program Files (x86)\NodejsUwp\Console\sdk\deps\chakrashim\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NODE_GYP_MODULE_NAME=GnkSpiAddon;NODE_ENGINE="chakra";NODE_ENGINE_CHAKRA=1;WIN32;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;BUILDING_V8_SHARED=1;BUILDING_UV_SHARED=1;BUILDING_NODE_EXTENSION;USE_EDGEMODE_JSRT=1;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>

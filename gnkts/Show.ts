@@ -1,4 +1,6 @@
-﻿/* Show object format
+﻿"use strict";
+
+/* Show object format
     see also show stream format in Public.h
 {
     "refresh": number,              // refresh interval in 10 ms units
@@ -29,11 +31,18 @@
 
 enum Format { base, update, transition };
 
+interface Options {
+    duration: number;
+    repeat: number;
+    rowCount?: number;
+    ledCount?: number; 
+}
+
 class Show {
     static defaultRowCount = 4;
     static defaultLedCount = 60;
 
-    static defaulOptions = {
+    static defaultOptions: Options = {
         duration: 1,
         repeat: 1,
         rowCount: Show.defaultRowCount,
@@ -46,13 +55,13 @@ class Show {
     };
 
     private static newFrame(format: Format, options) {
-        if (options.duration === null)
+        if (typeof options.duration === 'undefined')
             options.duration = 1;
-        if (options.repeat === null)
+        if (typeof options.repeat === 'undefined')
             options.repeat = 1;
-        if (options.rowCount === null)
+        if (typeof options.rowCount === 'undefined')
             options.rowCount = Show.defaultRowCount;
-        if (options.ledCount === null)
+        if (typeof options.ledCount === 'undefined')
             options.ledCount = Show.defaultLedCount;
 
         var frame = {
@@ -85,7 +94,7 @@ class Show {
     // add zero-filled base frame
     //  with rows formatted as array
     //  returns frame index
-    addBaseFrame(options = Show.defaulOptions): number {
+    addBaseFrame(options:Options = Show.defaultOptions): number {
 
         var frame = Show.newFrame(Format.base, options);
 
@@ -104,7 +113,7 @@ class Show {
     // add zero-filled update frame
     //  with rows formatted as array
     //  returns frame index
-    addUpdateFrame(options = Show.defaulOptions): number {
+    addUpdateFrame(options:Options = Show.defaultOptions): number {
 
         var frame = Show.newFrame(Format.update, options);
 
@@ -123,7 +132,7 @@ class Show {
     // add zero-filled transition frame
     //  with rows formatted as array
     //  returns frame index
-    addTransitionFrame(options = Show.defaulOptions): number {
+    addTransitionFrame(options:Options = Show.defaultOptions): number {
 
         var frame = Show.newFrame(Format.transition, options);
 
@@ -146,7 +155,7 @@ class Show {
     //      repeat: 1
     //      rowCount: defaultRowCount
     //      ledCount: defaultLedCount
-    addSingleColorFrame(led: string, options = Show.defaulOptions) {
+    addSingleColorFrame(led: string, options:Options = Show.defaultOptions) {
 
         var frame = Show.newFrame(Format.base, options);
 

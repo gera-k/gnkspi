@@ -1,4 +1,6 @@
-﻿module GnkSpi {
+﻿"use strict";
+
+module GnkSpi {
 
     export interface Dev {
         Show(show: string, device?: number, property?: number): number;

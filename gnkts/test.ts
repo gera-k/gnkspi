@@ -1,4 +1,6 @@
-﻿import fs = require('fs');
+﻿"use strict";
+
+import fs = require('fs');
 
 import GnkSpi = require('./GnkSpi');
 import Show = require('./Show');
@@ -364,7 +366,6 @@ switch (process.argv[2]) {
             var f_show = JSON.parse(f_str);
 
             Msg(JSON.stringify(f_show));
-
 
             var ls = LightStar.playScene(f_show);
             Msg(`Total: ${ls.getFrameCount()} frames`);

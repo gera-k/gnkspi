@@ -8,8 +8,8 @@
     "email": ""
   },
   "dependencies": {
-    "body-parser": "~1.14.1",
-    "express": "~4.13.3",
-    "morgan": "~1.6.1"
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "morgan": "^1.6.1"
   }
 }

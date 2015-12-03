@@ -1,4 +1,6 @@
-﻿import Show = require('./Show');
+﻿"use strict";
+
+import Show = require('./Show');
 import Gradient = require('./Gradient');
 
 /* LightStar light fixture
@@ -351,7 +353,7 @@ class LightStar extends Show {
                     break;
 
                 if (f == null)
-                    f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null });
+                    f = ls.addTransitionFrame({ duration: dur, repeat: rep });
 
                 for (var r = 0; r < LightStar.rayCount; r++) {
 
