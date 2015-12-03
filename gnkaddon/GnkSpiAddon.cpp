@@ -123,7 +123,7 @@ void Show(const FunctionCallbackInfo<Value>& args)
         size_t size = s.size();
         uint8_t* buf = new uint8_t[size];
 
-        if (optVerbose)
+        //if (optVerbose)
             Msg("output %d bytes to device %d", size, dev);
 
         memcpy(buf, s.c_str(), size);
@@ -135,7 +135,7 @@ void Show(const FunctionCallbackInfo<Value>& args)
 
     if (prop >= 0 && prop < sizeof(propertyList) / sizeof(propertyList[0]))
     {
-        if (optVerbose)
+        //if (optVerbose)
             Msg("Save to persistent property %d", prop);
 
         size_t size = s.size();

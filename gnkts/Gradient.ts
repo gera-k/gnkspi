@@ -52,6 +52,29 @@ class Gradient {
         }
     }
 
+    static isGrad(color: string): boolean {
+        return color.substr(0, 4) == "grad";
+    }
+
+    static new(count: number, grad: string): Gradient {
+
+        var arg: string[] = [];
+
+        var s = grad.split(" ");
+        if (s.shift() != "grad")
+            return null;
+
+        var rep = Number(s.shift());
+
+        while (rep-- > 0) {
+            s.forEach(c => {
+                arg.push(c);
+            });
+        }
+
+        return new Gradient(count, arg);
+    }
+
     getStepCount(): number {
         return this.step.length; 
     }

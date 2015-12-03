@@ -1,0 +1,14 @@
+{
+  "name": "Color pendulum",
+  "type": "pend",
+  "refesh": 1,
+  "pend": {
+    "repeat": 50,
+    "duration": 1,
+    "width": 1,
+    "lcolor": "#700000",
+    "pcolor": "#008000",
+    "rcolor": "#000080",
+    "direction": "lr"
+  }
+}

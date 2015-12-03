@@ -1,4 +1,6 @@
-﻿import GnkSpi = require('./GnkSpi');
+﻿import fs = require('fs');
+
+import GnkSpi = require('./GnkSpi');
 import Show = require('./Show');
 import LightStar = require('./LightStar');
 import ColorUtil = require('./ColorUtil');
@@ -225,13 +227,14 @@ switch (process.argv[2]) {
 
         break;
 
-    case "wave": {      // wave <refresh> <bcolor> <wcolor> <wspeed> <wlen> [<rlen> [<flen>]]
-        if (process.argv.length < 8) {
-            Msg(`process.argv.length ${process.argv.length}  expected 8 or more`);
+    case "wave": {      // wave <direction> <refresh> <bcolor> <wcolor> <wspeed> <wlen> [<rlen> [<flen>]]
+        if (process.argv.length < 9) {
+            Msg(`process.argv.length ${process.argv.length}  expected 9 or more`);
             break;
         }
 
         var arg = 3;
+        var dir = process.argv[arg++];
         var ref = Number(process.argv[arg++]);
         var bcol = process.argv[arg++];
         var wcol = process.argv[arg++];
@@ -243,6 +246,15 @@ switch (process.argv[2]) {
             rlen = Number(process.argv[arg++]);
         if (arg < process.argv.length)
             flen = Number(process.argv[arg++]);
+
+        var d = 0;
+        // direction must be u or d
+        if (dir === "b")
+            d = 1; 
+        if (dir === "d")
+            d = 2; 
+        if (dir === "p")
+            d = 3; 
 
         // wspeed parameter must be in 1..100 range
         if (wspd < 1)
@@ -268,24 +280,100 @@ switch (process.argv[2]) {
         var rep = 100 - wspd;
         
         // add transition frame for each wave position
-        for (var w = 0; w < wmax; w++) {
-            var f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null })
 
-            for (var r = 0; r < LightStar.rayCount; r++) {
-                for (var l = 0; l < LightStar.ledCount[r]; l++) {
-                    if (l <= w && l > w - rlen) // rasing edge
-                        ls.setLed(f, r, l, rg.getColor(w - l));
-                    else if (l <= w - rlen && l > w - rlen - wlen)  // wave
-                        ls.setLed(f, r, l, wcol);
-                    else if (l <= w - rlen - wlen && l > w - rlen - wlen - flen) // falling edge
-                        ls.setLed(f, r, l, fg.getColor(w - rlen - wlen - l));
-                    else
-                        ls.setLed(f, r, l, bcol);
+        // up wave
+        if (d == 0 || d == 1) {
+            for (var w = 0; w < wmax; w++) {
+                var f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null })
+
+                for (var r = 0; r < LightStar.rayCount; r++) {
+                    for (var l = 0; l < LightStar.ledCount[r]; l++) {
+                        var led = l;
+
+                        if (l <= w && l > w - rlen) // rasing edge
+                            ls.setLed(f, r, led, rg.getColor(w - l));
+                        else if (l <= w - rlen && l > w - rlen - wlen)  // wave
+                            ls.setLed(f, r, led, wcol);
+                        else if (l <= w - rlen - wlen && l > w - rlen - wlen - flen) // falling edge
+                            ls.setLed(f, r, led, fg.getColor(w - rlen - wlen - l));
+                        else
+                            ls.setLed(f, r, led, bcol);
+                    }
+                }
+            }
+        }
+
+        // down wave
+        if (d == 1 || d == 2 || d == 3) {
+            for (var w = 0; w < wmax; w++) {
+                var f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null })
+
+                for (var r = 0; r < LightStar.rayCount; r++) {
+                    for (var l = 0; l < LightStar.maxLedsPerRay; l++) {
+                        var led = l;
+                        if (d == 2)
+                            led = LightStar.ledCount[r] - 1 - l;
+                        else
+                            led = LightStar.maxLedsPerRay - 1 - l;
+
+                        if (led >= LightStar.ledCount[r] || led < 0)
+                            continue;
+
+                        if (l <= w && l > w - rlen) // rasing edge
+                            ls.setLed(f, r, led, rg.getColor(w - l));
+                        else if (l <= w - rlen && l > w - rlen - wlen)  // wave
+                            ls.setLed(f, r, led, wcol);
+                        else if (l <= w - rlen - wlen && l > w - rlen - wlen - flen) // falling edge
+                            ls.setLed(f, r, led, fg.getColor(w - rlen - wlen - l));
+                        else
+                            ls.setLed(f, r, led, bcol);
+                    }
                 }
             }
         }
 
         gnkspi.Show(ls.asString(), 0, -1);
+
+        break;
+    }
+
+    case "list": {
+        try {
+            let dir = fs.readdirSync("./show");
+
+            dir.forEach((s: string)=> {
+                Msg(`File: ${s}`);
+            });
+        }
+        catch (err) {
+            Msg(`Error: ${err.message}`);
+        }
+
+        break;
+    }
+
+    case "play": {      // play <json file name>
+        if (process.argv.length < 4) {
+            Msg(`process.argv.length ${process.argv.length}  expected 4 or more`);
+            break;
+        }
+
+        try {
+            var f_buf = fs.readFileSync(`./show/${process.argv[3]}`);
+            var f_str = f_buf.toString();
+            var f_show = JSON.parse(f_str);
+
+            Msg(JSON.stringify(f_show));
+
+
+            var ls = LightStar.playScene(f_show);
+            Msg(`Total: ${ls.getFrameCount()} frames`);
+            gnkspi.Show(ls.asString(), 0, -1);
+        }
+        catch (err) {
+            Msg(`Error: ${err.message}`);
+            throw err;
+        }
 
         break;
     }

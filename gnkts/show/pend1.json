@@ -1,0 +1,14 @@
+{
+  "name": "Simple pendulum",
+  "type": "pend",
+  "refesh": 1,
+  "pend": {
+    "repeat": 20,
+    "duration": 1,
+    "width": 1,
+    "lcolor": "#000000",
+    "pcolor": "#808080",
+    "rcolor": "#000000",
+    "direction": "rl"
+  }
+}

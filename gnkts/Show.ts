@@ -78,6 +78,10 @@ class Show {
         return JSON.stringify(this.show);
     }
 
+    getFrameCount(): number {
+        return this.show.frame.length;
+    }
+
     // add zero-filled base frame
     //  with rows formatted as array
     //  returns frame index

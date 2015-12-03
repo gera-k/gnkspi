@@ -1,0 +1,32 @@
+{
+  "name": "Fancy wave",
+  "type": "wave",
+  "refesh": 1,
+  "wave": {
+    "repeat": 10,
+    "duration": 1,
+    "wlength": 2,
+    "rlength": 3,
+    "flength": 3,
+    "rays": [
+      {
+        "ray": [ 0, 2, 8, 10 ],
+        "direction": "ud",
+        "bcolor": "#202000",
+        "wcolor": "#0000F0"
+      },
+      {
+        "ray": [ 4, 6 ],
+        "direction": "ud",
+        "bcolor": "#002020",
+        "wcolor": "#800080"
+      },
+      {
+        "ray": [ 1, 3, 5, 7, 9 ],
+        "direction": "pu",
+        "bcolor": "#002000",
+        "wcolor": "#800000"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Simple wave",
+  "type": "wave",
+  "refesh": 1,
+  "wave": {
+    "repeat": 20,
+    "duration": 1,
+    "wlength": 3,
+    "rlength": 1,
+    "flength": 1,
+    "color": "#000000",
+    "rays": [
+      {
+        "ray": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
+        "direction": "ud",
+        "bcolor": "#000000",
+        "wcolor": "#808080"
+      }
+    ]
+  }
+}

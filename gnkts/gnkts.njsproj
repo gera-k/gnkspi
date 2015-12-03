@@ -6,7 +6,7 @@
     <Name>gnkts</Name>
     <RootNamespace>gnkts</RootNamespace>
     <Environment>GNK_DEBUG=YES</Environment>
-    <ScriptArguments>wave 1 "#800000" "#00A000" 50 1 2 5</ScriptArguments>
+    <ScriptArguments>play pend3.json</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -39,6 +39,12 @@
     <Content Include="public\gnkts\style.css" />
     <Content Include="public\index.html" />
     <Content Include="Scripts\tsd.json" />
+    <Content Include="show\pend1.json" />
+    <Content Include="show\pend2.json" />
+    <Content Include="show\pend3.json" />
+    <Content Include="show\wave1.json" />
+    <Content Include="show\wave2.json" />
+    <Content Include="show\wave3.json" />
     <Content Include="test.ps1" />
     <TypeScriptCompile Include="GnkSpi.ts" />
     <TypeScriptCompile Include="Gradient.ts" />
@@ -51,6 +57,7 @@
     <TypeScriptCompile Include="test.ts" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="show\" />
     <Folder Include="public\" />
     <Folder Include="public\gnkts\" />
     <Folder Include="public\jquery\" />
