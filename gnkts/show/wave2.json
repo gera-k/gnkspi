@@ -19,13 +19,13 @@
         "ray": [ 4, 6 ],
         "direction": "ud",
         "bcolor": "#002020",
-        "wcolor": "#800080"
+        "wcolor": "#F0F000"
       },
       {
         "ray": [ 1, 3, 5, 7, 9 ],
         "direction": "pu",
         "bcolor": "#002000",
-        "wcolor": "#800000"
+        "wcolor": "#F000F0"
       }
     ]
   }

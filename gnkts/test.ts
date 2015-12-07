@@ -88,9 +88,8 @@ switch (process.argv[2]) {
         var f = ls.addBaseFrame();
         var g = new Gradient(LightStar.rayCount, args);
 
-        var cnt = 0;
         for (var ray = 0; ray < LightStar.rayCount; ray++) {
-            ls.setRay(f, ray, g.getColor(cnt++));
+            ls.setRay(f, ray, g.getColor(ray));
         }
 
         gnkspi.Show(ls.asString(), 0, -1);
@@ -144,7 +143,7 @@ switch (process.argv[2]) {
             var rep = Number(process.argv[arg++]);
             col = process.argv[arg++];
 
-            f = ls.addUpdateFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null });
+            f = ls.addUpdateFrame({ duration: dur, repeat: rep });
             ls.setFrame(f, col);
         }
 
@@ -181,7 +180,7 @@ switch (process.argv[2]) {
             var sub = process.argv[arg++];
 
             for (var t = 0; t < (29 + wl * 2); t++) {
-                f = ls.addUpdateFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null });
+                f = ls.addUpdateFrame({ duration: dur, repeat: rep });
 
                 for (var led = 0; led < 30; led++) {
                     for (var ray = 0; ray < LightStar.rayCount; ray++) {
@@ -222,7 +221,7 @@ switch (process.argv[2]) {
             var rep = Number(process.argv[arg++]);
             col = process.argv[arg++];
 
-            ls.setFrame(ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null }), col);
+            ls.setFrame(ls.addTransitionFrame({ duration: dur, repeat: rep }), col);
         }
 
         gnkspi.Show(ls.asString(), 0, -1);
@@ -286,7 +285,7 @@ switch (process.argv[2]) {
         // up wave
         if (d == 0 || d == 1) {
             for (var w = 0; w < wmax; w++) {
-                var f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null })
+                var f = ls.addTransitionFrame({ duration: dur, repeat: rep })
 
                 for (var r = 0; r < LightStar.rayCount; r++) {
                     for (var l = 0; l < LightStar.ledCount[r]; l++) {
@@ -308,7 +307,7 @@ switch (process.argv[2]) {
         // down wave
         if (d == 1 || d == 2 || d == 3) {
             for (var w = 0; w < wmax; w++) {
-                var f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null })
+                var f = ls.addTransitionFrame({ duration: dur, repeat: rep })
 
                 for (var r = 0; r < LightStar.rayCount; r++) {
                     for (var l = 0; l < LightStar.maxLedsPerRay; l++) {

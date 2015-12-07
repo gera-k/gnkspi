@@ -40,9 +40,9 @@ class ColorUtil {
         var stp = this.strToRgb(step, true);
 
         return this.rgbToStr([
-            rgb[0] + stp[0],
-            rgb[1] + stp[1],
-            rgb[2] + stp[2]
+            (rgb[0] + stp[0]) % 256,
+            (rgb[1] + stp[1]) % 256,
+            (rgb[2] + stp[2]) % 256
         ]);
     }
 }

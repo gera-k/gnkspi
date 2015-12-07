@@ -214,7 +214,7 @@ class LightStar extends Show {
                     var fg = new Gradient(flen, [wcol, ecol]);
 
                     if (f == null)
-                        f = ls.addTransitionFrame({ duration: dur, repeat: rep, rowCount: null, ledCount: null });
+                        f = ls.addTransitionFrame({ duration: dur, repeat: rep });
 
                     if (d == 0) { // up wave
                         for (var r = 0; r < LightStar.rayCount; r++) {

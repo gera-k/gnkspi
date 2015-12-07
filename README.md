@@ -2,12 +2,12 @@
 SPI driver and tools for Win10 IoT [Light Controller](https://www.hackster.io/gera_k/rpi2-win10-iot-based-light-controller-e73990) project 
 ## Tools
 - Rpi2 board running Windows 10 IoT build 10556.
-- Visual Studio 2015.
-- Windows Driver Kit 2015.
+- Visual Studio 2015 U1.
+- Windows Driver Kit 2015 10556.
 - Node.js Tools for Visual Studio.
 
 ## Kernel driver
-The kernel driver gnkspi replaces the SPI driver that comes with Win IoT. Note that _standard_ SPI API becomes unavailable as soon as you install this driver.
+The kernel driver gnkspi replaces the SPI driver that comes with Win IoT. Note that _standard_ SPI API becomes unavailable after you install this driver.
 
 1. Compiling the driver.
  - Open the solution **gnkspi.sln** and select the **gnkspi** project. Make sure that platform is set to **ARM** and configuration to **Release**. 
@@ -117,6 +117,9 @@ Select directory on your Rpi2 board where **GnkSpiAddon.node** and create sub-di
 		"C:\Node.js (Chakra)\node.exe" server.js
 
 - The server should start listening on port 1337. Open a browser and point it to IP address of your Rpi2, port 1337.
+- in case the browser is unable to connect, try adding firewall rule for node.exe to your Rpi2:
+
+		netsh advfirewall firewall add rule name="Node.js" dir=in action=allow program="C:\Node.js (Chakra)\Node.exe" enable=yes
 
 ![](Readme2.png)
 
