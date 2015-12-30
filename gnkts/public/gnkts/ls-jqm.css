@@ -1,0 +1,72 @@
+html,
+body,
+.ui-page {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.ui-page,
+.ui-page * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ui-page .ui-content, .ui-page .my-breakpoint {
+  height: inherit;
+}
+
+@media all and (orientation: portrait) {
+	.my-breakpoint .ui-block-a {
+		width: 100%;
+        height: 55%;
+		float:none;
+	}
+	.my-breakpoint .ui-block-b {
+		width: 100%;
+		float:none;
+	}
+}
+
+@media all and (orientation: landscape) {
+	.my-breakpoint .ui-block-a { 
+        width: 55%; 
+        height: 100%;
+	}
+	.my-breakpoint .ui-block-b { 
+        width: 45%; 
+	}
+}
+
+#swatch-home, 
+#swatch-color {
+  height:100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.slider {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.slider input {
+    display: none;
+}
+.slider .ui-slider-track {
+    margin: 15px;
+}
+.slider-red .ui-btn-active,
+.slider-red .ui-slider-handle {
+    background-color: red  !important;
+}
+.slider-green .ui-btn-active,
+.slider-green .ui-slider-handle {
+    background-color: green  !important;
+}
+.slider-blue .ui-btn-active,
+.slider-blue .ui-slider-handle {
+    background-color: blue  !important;
+}

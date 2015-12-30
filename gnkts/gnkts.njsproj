@@ -6,7 +6,8 @@
     <Name>gnkts</Name>
     <RootNamespace>gnkts</RootNamespace>
     <Environment>GNK_DEBUG=YES</Environment>
-    <ScriptArguments>pgrad 4  "#0000FF" "#00FF00" "#FF0000"</ScriptArguments>
+    <ScriptArguments>
+    </ScriptArguments>
     <NodeExePath>C:\Program Files (x86)\Nodejs\node.exe</NodeExePath>
     <NodeExeArguments>--harmony_default_parameters</NodeExeArguments>
     <DebuggerPort>
@@ -18,7 +19,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>2ca86b1d-7cc1-4eec-9f79-7d133aa4058c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>test.js</StartupFile>
+    <StartupFile>server.js</StartupFile>
     <StartWebBrowser>True</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -31,7 +32,7 @@
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
     <EnableTypeScript>true</EnableTypeScript>
-    <StartWebBrowser>False</StartWebBrowser>
+    <StartWebBrowser>True</StartWebBrowser>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,8 +41,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="public\gnkts\style.css" />
-    <Content Include="public\index.html" />
+    <Content Include="public\gnkts\ls-jqm.css" />
+    <Content Include="views\error.jade" />
+    <Content Include="views\home.jade" />
     <Content Include="Scripts\tsd.json" />
     <Content Include="show\pend1.json" />
     <Content Include="show\pend2.json" />
@@ -60,6 +62,7 @@
     <TypeScriptCompile Include="test.ts" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="views\" />
     <Folder Include="show\" />
     <Folder Include="public\" />
     <Folder Include="public\gnkts\" />
@@ -68,11 +71,11 @@
     <Folder Include="Scripts\typings\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="public\gnkts\light.js" />
+    <Compile Include="public\gnkts\ls-jqm.js" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptTarget>ES6</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
     <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>

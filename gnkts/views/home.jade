@@ -1,0 +1,77 @@
+doctype html
+html
+  head
+    title= title
+    
+    meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+    //-    
+      link(rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css")
+      script(src="http://code.jquery.com/jquery-2.1.4.min.js")
+      script(src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js")
+    
+    link(rel="stylesheet" href="/jquery/jquery.mobile-1.4.5.css")
+    link(rel="stylesheet" href="/gnkts/ls-jqm.css")
+    script(src="/jquery/jquery-2.1.4.js")
+    script(src="/jquery/jquery.mobile-1.4.5.js")
+    script(src="/gnkts/ls-jqm.js")
+  
+  body
+    // home page
+    div(data-role="page" id="home" swatchId="swatch-home")
+
+      div(data-role="header", data-position="fixed", id="header")
+        h1 Light Star 
+      
+      div(role="main" class="ui-content")
+        
+        div(data-role="popup" id="sceneSelect")
+          ul(data-role="listview" id="saved-scenes")
+        
+        div(data-role="popup" id="sceneEdit")
+          ul(data-role="listview")
+            li
+              a(href="#color", data-ajax="true") Pick-a-Color
+            li
+              a(href="#rainbow", data-ajax="true") Rainbow
+        
+        div(class="ui-grid-a my-breakpoint")
+          div(class="ui-block-a")
+            canvas(id="swatch-home" width=900 height=600)
+              Your browser does not support HTML5 Canvas.
+          div(class="ui-block-b")
+            h3(id="curr-scene-name" style="text-align: center;") Not playing
+            a(href="#sceneSelect" data-rel="popup" class="ui-btn ui-icon-check ui-btn-icon-left") Saved Scenes
+            a(href="#sceneEdit" data-rel="popup" class="ui-btn ui-icon-edit ui-btn-icon-left") Edit Scene
+            a(onclick="stopScene()" class="ui-btn ui-icon-delete ui-btn-icon-left") Stop
+      //-
+        div(data-role="footer", data-position="fixed")
+          h3 &copy; 2015 GNK Software Toys
+
+    // 'Pick-a-color' page
+    div(data-role="page" id="color" swatchId="swatch-color")
+      
+      div(data-role="header", data-position="fixed", id="header")
+        a(href="#home", data-ajax="true", class="ui-btn ui-icon-home ui-btn-icon-left ui-btn-inline") Home
+        h1 Pick-a-color 
+      
+      div(role="main", class="ui-content")
+        div(class="ui-grid-a my-breakpoint")
+          div(class="ui-block-a")
+            canvas(id="swatch-color" width=900 height=600)
+              Your browser does not support HTML5 Canvas.
+          div(class="ui-block-b")
+            input(type="text" id="value" text-alignment=center)
+            div(class="slider slider-red")
+              label(for="slider-red-input" class="ui-hidden-accessible") R
+              input(type="range" name="slider-red-input" id="red" value="10" min="0" max="255" data-highlight="true")
+            div(class="slider slider-green")
+              label(for="slider-green-input" class="ui-hidden-accessible") G
+              input(type="range" name="slider-green-input" id="green" value="10" min="0" max="255" data-highlight="true")
+            div(class="slider slider-blue")
+              label(for="slider-blue-input" class="ui-hidden-accessible") B
+              input(type="range" name="slider-blue-input" id="blue" value="10" min="0" max="255" data-highlight="true")
+            a(href="#home", class="ui-btn ui-icon-home ui-btn-icon-left ui-btn-inline") Back
+
