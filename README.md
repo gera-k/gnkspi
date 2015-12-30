@@ -106,6 +106,7 @@ The GUI is written in TypeScript so the project must be built before it can be d
 Select directory on your Rpi2 board where **GnkSpiAddon.node** and create sub-directory **gnkts**. Copy the following files into **gnkts**:
 
 - *.js
+- views/*
 - public/*
 - node_modules/*
 
@@ -121,7 +122,7 @@ Select directory on your Rpi2 board where **GnkSpiAddon.node** and create sub-di
 
 		netsh advfirewall firewall add rule name="Node.js" dir=in action=allow program="C:\Node.js (Chakra)\Node.exe" enable=yes
 
-![](Readme2.png)
+![](Readme3.png)
 
 #### Demo script
 As the GUI capabilities are currently limited, a PowerShell script was created to demo various static and dynamic shows the light fixture itself is capable of. Of course the script only demonstrates a few shows, the controller capabilities are virtually unlimited.
