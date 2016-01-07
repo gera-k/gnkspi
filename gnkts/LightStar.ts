@@ -116,6 +116,18 @@ class LightStar extends Show {
         }
     }
 
+    static playColor(ls: LightStar, prm: Object) {
+        var col = "#000000";
+
+        if (prm.hasOwnProperty("color"))
+            col = prm["color"];
+
+        // add base frame filled with required color
+        var base = ls.addBaseFrame();
+        ls.setFrame(base, col);
+
+    }
+
     static playWave(ls: LightStar, prm: Object) {
         var rays = [
             {
@@ -405,16 +417,22 @@ class LightStar extends Show {
 
         switch (scene["type"]) {
 
+            case "color":
+                if (!scene.hasOwnProperty("param"))
+                    throw new SyntaxError("Missing scene parameters");
+                LightStar.playColor(ls, scene["param"]);
+                break;
+
             case "wave":
-                if (!scene.hasOwnProperty("wave"))
-                    throw new SyntaxError("Missing wave parameters");
-                LightStar.playWave(ls, scene["wave"]);
+                if (!scene.hasOwnProperty("param"))
+                    throw new SyntaxError("Missing scene parameters");
+                LightStar.playWave(ls, scene["param"]);
                 break;
 
             case "pend":
-                if (!scene.hasOwnProperty("pend"))
-                    throw new SyntaxError("Missing pendulum parameters");
-                LightStar.playPend(ls, scene["pend"]);
+                if (!scene.hasOwnProperty("param"))
+                    throw new SyntaxError("Missing scene parameters");
+                LightStar.playPend(ls, scene["param"]);
                 break;
 
             default:

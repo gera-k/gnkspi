@@ -14,14 +14,17 @@ module GnkSpi {
         constructor(log: (msg: string) => void) {
             this.log = log;
             this.addon = require('../GnkSpiAddon');
-            console.log("addon loaded");
+            this.log("addon loaded");
         }
 
         Show(show: string, device?: number, property?: number): number {
+            this.log(`Show dev=${device}  prop=${property}`);
+            this.log(show);
             return this.addon.show(show, device, property);
         }
 
         Stop(device: number): number {
+            this.log(`Stop dev=${device}`);
             return this.addon.stop(device);
         }
     }

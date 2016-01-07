@@ -9,6 +9,7 @@ import LightStar = require('./LightStar');
 var GnkDebug = false;
 if (process.env.GNK_DEBUG === 'YES') {
     GnkDebug = true;
+    console.log("Debug on");
 }
 
 var Log: (msg: string) => void;
@@ -61,74 +62,63 @@ var homePage = function (req, res) {
 app.get('/', homePage);
 app.get('/home', homePage);
 
-var colorPage = function (req, res) {
-    res.render('color', { title: 'Pick a Color' });
-};
+// in-memory scenes
+//  scenes are added to this object
+//  when user selects Save in Scene Edit page.
+//  The user-entered id is used as a key
+//  therefore it must be unique. The id is also
+//  duplicated into scene 'id' field.
+var savedScenes: Object = {}
 
-app.get('/color', colorPage);
-
-var lightSetActive = false;
-var postLight = function (req, res) {
-    if (lightSetActive) {
-        res.json({ status: "active" });
-        return;
-    }
-
-    var cmd: Object = req.body;
-
-    Log(`req: ${JSON.stringify(cmd) }`);
-
-    var device = 0;
-    var property = -1;
-    var action = cmd["action"];
-    var color = cmd["color"];
-
-    if (typeof action == "string") {
-
-        switch (action) {
-        case "stop":
-            gnkspi.Stop(device);
-            break;
-        case "change":
-            property = 0;
-        case "move":
-            if (typeof color == "string") {
-                lightSetActive = true;
-                var startShow = new Promise(function (resolve, reject) {
-                    var show = new Show(10);
-                    show.addSingleColorFrame(cmd["color"]);
-                    var s = show.asString();
-                    Log(s);
-                    gnkspi.Show(s, device, property);
-                    setTimeout( () => { resolve(); }, 50);
-                });
-
-                startShow.then(
-                    () => { lightSetActive = false },
-                    () => { lightSetActive = false }
-                );
-            }
-            break;
-        }
-    }
-
-    res.json({ status: "complete" });
-}
-
-app.post('/light', postLight);
-
+// structure of scene object
 interface Scene {
-    file: string;
+    id: string;         // unique scene ID: name of file in FS or key in savedScenes 
     name: string;
     type: string;
+    refresh?: number;
+    edit?: boolean;
+    param?: any;        // depends on type of scene
 }
 
 var currentScene: Scene = {
-    file: "",
+    id: "",
     name: "",
     type: ""
 }
 
+var showInProgress: boolean = false;
+function showScene(s: Scene): void {
+
+    if (showInProgress)
+        return;
+
+    showInProgress = true;
+
+    Log(`Show scene: ${JSON.stringify(s)}`);
+
+    new Promise(function (resolve, reject) {
+        var ls = LightStar.playScene(s);
+        var r = gnkspi.Show(ls.asString(), 0, -1);
+        if (r >= 0)
+            resolve(`success ${r}`);
+        else
+            reject(`error ${r}`);
+    }).then(function (res) {
+        Log(`Show complete: ${res}`);
+        showInProgress = false;
+    }, function (err) {
+        Log(`Show error: ${err}`);
+        showInProgress = false;
+    });
+}
+
+function showCurrent(): void {
+    showScene(currentScene);
+}
+
+
+// postScene
+//  POST /scene handler
 var postScene = function (req, res) {
     var cmd: Object = req.body;
     var ret = { status: "unknown", data: null };
@@ -136,28 +126,49 @@ var postScene = function (req, res) {
     Log(`req: ${JSON.stringify(cmd)}`);
 
     var action = cmd["action"];
-    var file = cmd["file"];
+    var id = cmd["id"];
+    var scene = cmd["scene"];
 
     if (typeof action == "string") {
 
         switch (action) {
-            case "list":
+            case "list":            // return list of saved scenes
+                let list = new Array<Scene>(0);
+
+                // first collect in-memory scenes
+                for (var f in savedScenes) {
+                    let f_scene = savedScenes[f];
+
+                    list.push({
+                        id: f,
+                        name: `${f_scene["name"]}:${f}`,
+                        type: f_scene["type"],
+                        edit: f_scene["edit"]
+                    });
+                }
+
+                // then read files from the 'show' folder
                 try {
                     let dir = fs.readdirSync("./show");
-                    let list = new Array<Scene>(0);
 
                     dir.forEach((f: string) => {
-                        Msg(`File: ${f}`);
+                        Log(`File: ${f}`);
 
-                        let f_buf = fs.readFileSync(`./show/${f}`);
-                        let f_str = f_buf.toString();
-                        let f_show = JSON.parse(f_str);
+                        try {
+                            let f_buf = fs.readFileSync(`./show/${f}`);
+                            let f_str = f_buf.toString();
+                            let f_scene = JSON.parse(f_str);
 
-                        list.push({
-                            file: f,
-                            name: f_show["name"],
-                            type: f_show["type"]
-                        });
+                            list.push({
+                                id: f,
+                                name: f_scene["name"],
+                                type: f_scene["type"],
+                                edit: f_scene["edit"]
+                            });
+                        }
+                        catch (err) {
+                            Log(`File ${f}: error ${err.message}`);
+                        }
                     });
 
                     ret.status = "success";
@@ -170,46 +181,93 @@ var postScene = function (req, res) {
                 }
                 break;
 
-            case "get":
+            case "get":             // get current scene
                 ret.status = "success";
                 ret.data = currentScene;
                 break;
 
-            case "set":
-                if (typeof file == "string") {
+            case "set":             // set current scene from memory/file
+                if (typeof id == "string") {
+                    let f_show = null;
+
+                    // try memory scenes first
+                    if (savedScenes.hasOwnProperty(id)) {
+                        f_show = savedScenes[id];
+                    }
+                    else
                     try {
-                        Msg(`File: ${file}`);
+                        Log(`File: ${id}`);
 
-                        let f_buf = fs.readFileSync(`./show/${file}`);
+                        let f_buf = fs.readFileSync(`./show/${id}`);
                         let f_str = f_buf.toString();
-                        let f_show = JSON.parse(f_str);
-
-                        ret.status = "success";
-                        currentScene = ret.data = {
-                            file: file,
-                            name: f_show["name"],
-                            type: f_show["type"]
-                        };
-
-                        var playShow = new Promise(function (resolve, reject) {
-                            var ls = LightStar.playScene(f_show);
-                            Msg(`Total: ${ls.getFrameCount()} frames`);
-                            gnkspi.Show(ls.asString(), 0, -1);
-                        });
+                        f_show = JSON.parse(f_str);
                     }
                     catch (err) {
                         Msg(`Error: ${err.message}`);
                         ret.status = "error";
                         ret.data = err.message;
                     }
+
+                    if (f_show != null) {
+                        currentScene = {
+                            id: id,
+                            name: f_show["name"],
+                            type: f_show["type"],
+                            refresh: f_show["refresh"],
+                            edit: f_show["edit"],
+                            param: f_show["param"]
+                        };
+
+                        showCurrent();
+
+                        ret.status = "success";
+                        ret.data = {
+                            id: currentScene.id,
+                            name: currentScene.name,
+                            type: currentScene.type,
+                            edit: currentScene.edit
+                        };
+                    }
                 }
+                break;
+
+            case "getScene":        // return current scene for editing
+                ret.status = "success";
+                ret.data = {
+                    id: currentScene.id,
+                    name: currentScene.name,
+                    type: currentScene.type,
+                    edit: currentScene.edit,
+                    refresh: currentScene.refresh,
+                    param: currentScene.param
+                };
+                break;
+
+            case "updateScene":        // update current scene parameters to one received from client
+                if (scene != null && scene.param != null) {
+                    currentScene.param = scene.param;
+                    showCurrent();
+                }
+                ret.status = "success";
+                ret.data = {};
+                break;
+
+            case "saveScene":       // save scene to memory TODO: file
+                if (scene != null) {
+                    scene.id = id;
+                    savedScenes[id] = scene;
+                    currentScene = scene;
+                    showCurrent();
+                }
+                ret.status = "success";
+                ret.data = {};
                 break;
 
             case "stop":
                 gnkspi.Stop(0);
                 ret.status = "success";
                 currentScene = ret.data = {
-                    file: "",
+                    id: "",
                     name: "",
                     type: ""
                 };

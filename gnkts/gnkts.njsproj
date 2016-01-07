@@ -8,7 +8,7 @@
     <Environment>GNK_DEBUG=YES</Environment>
     <ScriptArguments>
     </ScriptArguments>
-    <NodeExePath>C:\Program Files (x86)\Nodejs\node.exe</NodeExePath>
+    <NodeExePath>C:\Program Files (x86)\Nodejs-5\node.exe</NodeExePath>
     <NodeExeArguments>--harmony_default_parameters</NodeExeArguments>
     <DebuggerPort>
     </DebuggerPort>
@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="public\gnkts\ls-jqm.css" />
+    <Content Include="show\color1.json" />
     <Content Include="views\error.jade" />
     <Content Include="views\home.jade" />
     <Content Include="Scripts\tsd.json" />
