@@ -13,29 +13,29 @@ body,
   box-sizing: border-box;
 }
 
-.ui-page .ui-content, .ui-page .my-breakpoint {
+.ui-page .ui-content, .ui-page .outer-grid_ {
   height: inherit;
 }
 
 @media all and (orientation: portrait) {
-	.my-breakpoint .ui-block-a {
+	.outer-grid > #block-a {
 		width: 100%;
-        height: 55%;
+        height: 50%;
 		float:none;
 	}
-	.my-breakpoint .ui-block-b {
+	.outer-grid > #block-b {
 		width: 100%;
 		float:none;
 	}
 }
 
 @media all and (orientation: landscape) {
-	.my-breakpoint .ui-block-a { 
-        width: 55%; 
+	.outer-grid > #block-a { 
+        width: 50%; 
         height: 100%;
 	}
-	.my-breakpoint .ui-block-b { 
-        width: 45%; 
+	.outer-grid > #block-b { 
+        width: 50%; 
 	}
 }
 
@@ -70,3 +70,7 @@ body,
 .slider-blue .ui-slider-handle {
     background-color: blue  !important;
 }
+
+.centerText {
+    text-align: center !important;
+}?
