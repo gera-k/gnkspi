@@ -350,7 +350,7 @@ Return Value:
     deviceContext->regVirt = 0;
 //        RtlZeroMemory(deviceContext->frame, sizeof(deviceContext->frame));
     deviceContext->currFrame = 0;
-    deviceContext->currRow = 0;
+//    deviceContext->currRow = 0;
 
     // Create a device interface
     status = WdfDeviceCreateDeviceInterface(
@@ -377,7 +377,7 @@ Return Value:
     // Create timer for refresh task
     WDF_TIMER_CONFIG_INIT_PERIODIC(&timerConfig, gnkspiRefresh, GNKSPL_REFRESH_UNIT);
 //            timerConfig.AutomaticSerialization = TRUE;
-            timerConfig.UseHighResolutionTimer = WdfTrue;
+//            timerConfig.UseHighResolutionTimer = WdfTrue;
     WDF_OBJECT_ATTRIBUTES_INIT(&timerAttributes);
     timerAttributes.ParentObject = device;
     status = WdfTimerCreate(
@@ -795,8 +795,8 @@ gnkspiShow0Next(
     KeAcquireSpinLock(&deviceContext->frameLock, &Irql);
     deviceContext->currFrame = newFrame;
     deviceContext->currRowCount = rowCount;
-    if (deviceContext->currRow >= rowCount)
-        deviceContext->currRow = 0;
+//    if (deviceContext->currRow >= rowCount)
+//        deviceContext->currRow = 0;
     RtlCopyMemory(deviceContext->currLedCount, ledCount, sizeof(ledCount));
     KeReleaseSpinLock(&deviceContext->frameLock, Irql);
 }
@@ -815,7 +815,7 @@ gnkspiShow0Stop(
 
     KeAcquireSpinLock(&deviceContext->frameLock, &Irql1);
     deviceContext->currFrame = NULL;
-    deviceContext->currRow = 0;
+//    deviceContext->currRow = 0;
 
     KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
 }
@@ -841,63 +841,66 @@ gnkspiRefresh(
 
     Tr4("");
 
-    KeAcquireSpinLock(&deviceContext->frameLock, &Irql1);
-
-    frame = deviceContext->currFrame;
-    ri = deviceContext->currRow;
-    ledCount = deviceContext->currLedCount[ri];
-    loopCount = ledCount + 4;
-
-    if (frame == NULL)
-    {
-        KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
-        return;
-    }
-
     *cs = CS_CLEAR_TX | CS_CLEAR_RX;
-
-    ULONG* row = frame + ri * GNKSPL_MAX_LED_COUNT;
-    ULONG gpio = 1 << (22 + ri);
-
-    // select row in hardware
-    *GPCLR0(g) = gpio;
 
     *cs = CS_TA | CS_CLEAR_TX | CS_CLEAR_RX;
 
-    Irql2 = KeRaiseIrqlToSynchLevel();
-
-    for (li = 0; li < loopCount; li++)
+    for (ri = 0; ri < deviceContext->currRowCount; ri++)
     {
-        ULONG led = row[li];
+        KeAcquireSpinLock(&deviceContext->frameLock, &Irql1);
 
-        for (bi = 23; bi >= 0; bi--)
+        frame = deviceContext->currFrame;
+    //    ri = deviceContext->currRow;
+        ledCount = deviceContext->currLedCount[ri];
+        loopCount = ledCount + 4;
+
+        if (frame == NULL)
         {
-            BYTE v = (led & (1 << bi)) ? 0xFC : 0xC0;
-                
-            *fifo = li < ledCount ? v : 0;
-
-            t1 = 100000;
-            while ((!(*cs & CS_TXD)) && (--t1));
-            if (t1 == 0)
-                break;
+            KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
+            return;
         }
 
-        *cs = CS_TA | CS_CLEAR_RX;
+        ULONG* row = frame + ri * GNKSPL_MAX_LED_COUNT;
+        ULONG gpio = 1 << (22 + ri);
+
+        // select row in hardware
+        *GPCLR0(g) = gpio;
+
+        Irql2 = KeRaiseIrqlToSynchLevel();
+
+        for (li = 0; li < loopCount; li++)
+        {
+            ULONG led = row[li];
+
+            for (bi = 23; bi >= 0; bi--)
+            {
+                BYTE v = (led & (1 << bi)) ? 0xFC : 0xC0;
+
+                *fifo = li < ledCount ? v : 0;
+
+                t1 = 100000;
+                while ((!(*cs & CS_TXD)) && (--t1));
+                if (t1 == 0)
+                    break;
+            }
+
+            *cs = CS_TA | CS_CLEAR_RX;
+        }
+
+        KeLowerIrql(Irql2);
+
+        KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
+
+        *GPSET0(g) = gpio;
+
+        if (t1 == 0)
+            Err("TXD hang  bi %d  CS %08X", bi, *R_CS(b));
     }
-
-    KeLowerIrql(Irql2);
-
-    KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
-
-    *GPSET0(g) = gpio;
-
-    if (t1 == 0)
-        Err("TXD hang  bi %d  CS %08X", bi, *R_CS(b));
 
     *cs = CS_CLEAR_TX | CS_CLEAR_RX;
 
-    if (++deviceContext->currRow >= deviceContext->currRowCount)
-        deviceContext->currRow = 0;
+//    if (++deviceContext->currRow >= deviceContext->currRowCount)
+//        deviceContext->currRow = 0;
 
     if (t1 == 0)
     {

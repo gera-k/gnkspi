@@ -147,7 +147,7 @@ typedef struct _DEVICE_CONTEXT
 
     // current frame info
     ULONG* currFrame;       // points to current frame to show
-    BYTE currRow;
+//    BYTE currRow;
     BYTE currRowCount;
     BYTE currLedCount[GNKSPL_MAX_ROW_COUNT];
     ULONG showFrame1[GNKSPL_MAX_ROW_COUNT * GNKSPL_MAX_LED_COUNT];
