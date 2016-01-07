@@ -205,7 +205,7 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
     try
     {
         json show = json::parse(jsonStr);
-        char refresh = 0;
+        json refresh;
         json frame;
 
         if (!show.is_object())
@@ -218,7 +218,7 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
         {
             if (!it.key().compare("refresh"))
             {
-                refresh = (char)it.value();
+                refresh = it.value();
             }
             else if (!it.key().compare("frame"))
             {
@@ -230,11 +230,17 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
             }
         }
 
-        if (refresh == 0)
+        int _refresh = 0;
+        if (refresh.is_number())
+            _refresh = static_cast<int>(refresh);
+        else if (refresh.is_string())
+            _refresh = atoi(static_cast<std::string>(refresh).c_str());
+        
+        if (_refresh == 0)
             throw std::exception("Refresh interval is missing or invalid");
 
         // refresh rate
-        s << refresh;
+        s << (char)_refresh;
 
         if (!frame.is_array())
             throw std::exception("Frame array is missing or invalid");
@@ -249,8 +255,8 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
 
             std::string formatStr;
             GNKSPI_FRAME_FORMAT format = GNKSPI_FRAME_INVALID;
-            uint16_t duration = 0;
-            uint16_t repeat = 0;
+            json duration = 0;
+            json repeat = 0;
             json row;
             char rowCount;
 
@@ -262,11 +268,11 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
                 }
                 else if (!it.key().compare("duration"))
                 {
-                    duration = (uint16_t)it.value();
+                    duration = it.value();
                 }
                 else if (!it.key().compare("repeat"))
                 {
-                    repeat = (uint16_t)it.value();
+                    repeat = it.value();
                 }
                 else if (!it.key().compare("row"))
                 {
@@ -287,10 +293,20 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
             else
                 throw std::exception("Frame format is missing or invalid");
 
-            if (duration == 0)
+            int _duration = 0;
+            if (duration.is_number())
+                _duration = static_cast<int>(duration);
+            else if (duration.is_string())
+                _duration = atoi(static_cast<std::string>(duration).c_str());
+            if (_duration == 0)
                 throw std::exception("Frame duration is missing or invalid");
 
-            if (repeat == 0)
+            int _repeat = 0;
+            if (repeat.is_number())
+                _repeat = static_cast<int>(repeat);
+            else if (repeat.is_string())
+                _repeat = atoi(static_cast<std::string>(repeat).c_str());
+            if (_repeat == 0)
                 throw std::exception("Frame repeat count is missing or invalid");
 
             if (!row.is_array())
@@ -299,11 +315,11 @@ int parseJson(const std::string& jsonStr, std::stringstream& s)
             rowCount = (char)row.size();
 
             // frame header
-            s << (char)(duration);
-            s << (char)(duration >> 8);
+            s << (char)(_duration);
+            s << (char)(_duration >> 8);
 
-            s << (char)(repeat);
-            s << (char)(repeat >> 8);
+            s << (char)(_repeat);
+            s << (char)(_repeat >> 8);
 
             s << (char)format;
 
