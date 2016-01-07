@@ -1,8 +1,8 @@
 {
   "name": "Rainbow pendulum",
   "type": "pend",
-  "refesh": 1,
-  "pend": {
+  "refresh": 1,
+  "param": {
     "repeat": 30,
     "duration": 1,
     "width": 1,

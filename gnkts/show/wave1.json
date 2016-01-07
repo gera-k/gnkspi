@@ -1,8 +1,8 @@
 {
   "name": "Simple wave",
   "type": "wave",
-  "refesh": 1,
-  "wave": {
+  "refresh": 1,
+  "param": {
     "repeat": 20,
     "duration": 1,
     "wlength": 3,

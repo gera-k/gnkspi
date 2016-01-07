@@ -1,8 +1,8 @@
 {
   "name": "Simple pendulum",
   "type": "pend",
-  "refesh": 1,
-  "pend": {
+  "refresh": 1,
+  "param": {
     "repeat": 20,
     "duration": 1,
     "width": 1,

@@ -1,0 +1,11 @@
+{
+  "name": "Pick-a-color",
+  "type": "color",
+  "edit": true,
+  "refresh": 10,
+  "param": {
+    "repeat": 10,
+    "duration": 10,
+    "color": "#000000"
+  }
+}

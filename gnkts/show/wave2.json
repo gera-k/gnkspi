@@ -1,8 +1,8 @@
 {
   "name": "Fancy wave",
   "type": "wave",
-  "refesh": 1,
-  "wave": {
+  "refresh": 1,
+  "param": {
     "repeat": 10,
     "duration": 1,
     "wlength": 2,
