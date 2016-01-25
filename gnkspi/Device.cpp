@@ -217,12 +217,19 @@ NTSTATUS EvtDeviceD0Entry(
     Tr2("GPFSEL4   %08X", *GPFSEL4(b));
     Tr2("GPFSEL5   %08X", *GPFSEL5(b));
 
-    // set GPIO 22,23,24,25 to output
+    //  set GPIO 22,23,24,25 to output
+    //      GPIO 27 to input
     r = *GPFSEL2(b);
-    r &= (7 << 6) | (7 << 9) | (7 << 12) | (7 << 15);
-    r |= (1 << 6) | (1 << 9) | (1 << 12) | (1 << 15);
+    r &= (7 << 6) | (7 << 9) | (7 << 12) | (7 << 15) | (7 << 21);
+    r |= (1 << 6) | (1 << 9) | (1 << 12) | (1 << 15) | (0 << 21);
     *GPFSEL2(b) = r;
-    *GPSET0(b) = (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25);
+
+    Msg("GPFSEL2   %08X", *GPFSEL2(b));
+
+    *GPSET0(b) = (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25) | (1 << 27);
+
+    // detect hardware type
+    gnkspiDetectHardware(deviceContext);
 
     // read device attributes
     WDF_DEVICE_PROPERTY_DATA_INIT(&DeviceProperty, &gnkspiShow0);
@@ -293,6 +300,80 @@ NTSTATUS EvtDeviceD0Exit(
     return status;
 }
 
+
+NTSTATUS
+gnkspiDetectHardware(
+    _In_ PDEVICE_CONTEXT deviceContext
+    )
+{
+    NTSTATUS status = STATUS_SUCCESS;
+    ULONG* b = deviceContext->gpioVirt;
+    PGNKSPI_HW hw = &deviceContext->hw;
+    int i;
+
+    // detect hardware type
+    hw->size = sizeof(deviceContext->hw);
+    hw->refreshUnit = GNKSPL_REFRESH_UNIT;
+
+    hw->hwType = GNKSPI_HW_UNKNOWN;
+
+    *GPSET0(b) = (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25);
+
+    if ((*GPLEV0(b) & (1 << 27)) == 0)
+    {
+        Err("Unknown hardware - Invalid state of GPIO27 - GPLEV0 0x%08X", *GPLEV0(b));
+        status = STATUS_INVALID_DEVICE_STATE;
+    }
+    else
+    {
+        if (hw->hwType == GNKSPI_HW_UNKNOWN)
+        {
+            // if GPIO27 == GPIO22 => LightStar
+            for (i = 0; i < 100; i++)
+                *GPCLR0(b) = (1 << 22);
+
+            if (((*GPLEV0(b) & (1 << 27)) == 0))
+            {
+                Msg("LightStar hardware detected");
+                GNKSPI_HW_CONFIG_LIGHTSTAR(hw);
+            }
+
+            *GPSET0(b) = (1 << 22);
+        }
+
+        if (hw->hwType == GNKSPI_HW_UNKNOWN)
+        {
+            // if GPIO27 == GPIO23 => SnowFlake
+            for (i = 0; i < 100; i++)
+                *GPCLR0(b) = (1 << 23);
+
+            if (((*GPLEV0(b) & (1 << 27)) == 0))
+            {
+                Msg("LedPanel hardware detected");
+                GNKSPI_HW_CONFIG_LEDPANEL(hw);
+            }
+
+            *GPSET0(b) = (1 << 23);
+        }
+    }
+
+    Msg(" hw type: %d", hw->hwType);
+    Msg("led type: %d", hw->ledType);
+    Msg(" row cnt: %d", hw->rowCount);
+
+    if (hw->hwType == GNKSPI_HW_UNKNOWN)
+    {
+        *GPCLR0(b) = (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25);
+        Err("Unknown hardware - GPLEV0 0x%08X", *GPLEV0(b));
+
+        status = STATUS_UNSUCCESSFUL;
+    }
+
+    *GPSET0(b) = (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25);
+
+    return status;
+}
+
 NTSTATUS
 gkspiCreateDevice(
     _Inout_ PWDFDEVICE_INIT DeviceInit
@@ -348,9 +429,7 @@ Return Value:
 
     // Initialize the context.
     deviceContext->regVirt = 0;
-//        RtlZeroMemory(deviceContext->frame, sizeof(deviceContext->frame));
     deviceContext->currFrame = 0;
-//    deviceContext->currRow = 0;
 
     // Create a device interface
     status = WdfDeviceCreateDeviceInterface(
@@ -795,8 +874,6 @@ gnkspiShow0Next(
     KeAcquireSpinLock(&deviceContext->frameLock, &Irql);
     deviceContext->currFrame = newFrame;
     deviceContext->currRowCount = rowCount;
-//    if (deviceContext->currRow >= rowCount)
-//        deviceContext->currRow = 0;
     RtlCopyMemory(deviceContext->currLedCount, ledCount, sizeof(ledCount));
     KeReleaseSpinLock(&deviceContext->frameLock, Irql);
 }
@@ -815,7 +892,6 @@ gnkspiShow0Stop(
 
     KeAcquireSpinLock(&deviceContext->frameLock, &Irql1);
     deviceContext->currFrame = NULL;
-//    deviceContext->currRow = 0;
 
     KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
 }
@@ -828,6 +904,52 @@ gnkspiRefresh(
 {
     WDFDEVICE Device = (WDFDEVICE)WdfTimerGetParentObject(Timer);
     PDEVICE_CONTEXT deviceContext = DeviceGetContext(Device);
+    BOOLEAN stop = TRUE;
+
+    switch (deviceContext->hw.ledType)
+    {
+    case GNKSPI_LED_NEOPIXEL:
+        stop = gnkspiRefreshNeopixel(deviceContext);
+        break;
+    case GNKSPI_LED_DOTSTAR:
+        stop = gnkspiRefreshDotstar(deviceContext);
+        break;
+    }
+
+    if (stop)
+    {
+        gnkspiShow0Stop(deviceContext, FALSE);
+    }
+    else if (++deviceContext->currRefresh >= deviceContext->showRefreshPeriod)
+    {
+        deviceContext->currRefresh = 0;
+        gnkspiShow0Next(deviceContext);
+    }
+}
+
+
+VOID
+gnkspiClear(
+    _In_  PDEVICE_CONTEXT deviceContext
+    )
+{
+    switch (deviceContext->hw.ledType)
+    {
+    case GNKSPI_LED_NEOPIXEL:
+        gnkspiClearNeopixel(deviceContext);
+        break;
+    case GNKSPI_LED_DOTSTAR:
+        gnkspiClearDotstar(deviceContext);
+        break;
+    }
+}
+
+
+BOOLEAN
+gnkspiRefreshNeopixel(
+    _In_  PDEVICE_CONTEXT deviceContext
+    )
+{
     KIRQL Irql1, Irql2;
     ULONG* frame;
     BYTE ledCount;
@@ -842,7 +964,6 @@ gnkspiRefresh(
     Tr4("");
 
     *cs = CS_CLEAR_TX | CS_CLEAR_RX;
-
     *cs = CS_TA | CS_CLEAR_TX | CS_CLEAR_RX;
 
     for (ri = 0; ri < deviceContext->currRowCount; ri++)
@@ -850,14 +971,13 @@ gnkspiRefresh(
         KeAcquireSpinLock(&deviceContext->frameLock, &Irql1);
 
         frame = deviceContext->currFrame;
-    //    ri = deviceContext->currRow;
         ledCount = deviceContext->currLedCount[ri];
         loopCount = ledCount + 4;
 
         if (frame == NULL)
         {
             KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
-            return;
+            return TRUE;
         }
 
         ULONG* row = frame + ri * GNKSPL_MAX_LED_COUNT;
@@ -899,29 +1019,17 @@ gnkspiRefresh(
 
     *cs = CS_CLEAR_TX | CS_CLEAR_RX;
 
-//    if (++deviceContext->currRow >= deviceContext->currRowCount)
-//        deviceContext->currRow = 0;
-
-    if (t1 == 0)
-    {
-        gnkspiShow0Stop(deviceContext, FALSE);
-    }
-    else if (++deviceContext->currRefresh >= deviceContext->showRefreshPeriod)
-    {
-        deviceContext->currRefresh = 0;
-        gnkspiShow0Next(deviceContext);
-    }
+    return t1 == 0;
 }
 
-
 VOID
-gnkspiClear(
+gnkspiClearNeopixel(
     _In_  PDEVICE_CONTEXT deviceContext
     )
 {
     KIRQL Irql1, Irql2;
-    BYTE ledCount;
-    BYTE loopCount;
+    LONG ledCount;
+    LONG loopCount;
     ULONG* b = deviceContext->regVirt;
     ULONG* g = deviceContext->gpioVirt;
     int t1 = 0;
@@ -970,6 +1078,218 @@ gnkspiClear(
 
     if (t1 == 0)
         Err("TXD hang  bi %d  CS %08X", bi, *R_CS(b));
+
+    *cs = CS_CLEAR_TX | CS_CLEAR_RX;
+}
+
+BOOLEAN
+gnkspiRefreshDotstar(
+    _In_  PDEVICE_CONTEXT deviceContext
+    )
+{
+    KIRQL Irql1;
+    ULONG* frame;
+    BYTE ledCount;
+    ULONG* b = deviceContext->regVirt;
+    ULONG* g = deviceContext->gpioVirt;
+    int t1 = 0, t2 = 0;
+    LONG ri, li, bi = 0;    // row, led, byte indices
+    volatile ULONG* fifo = R_FIFO(b);
+    volatile ULONG* cs = R_CS(b);
+
+    Tr4("");
+
+    *cs = CS_CLEAR_TX | CS_CLEAR_RX;
+    *cs = CS_TA | CS_CLEAR_TX | CS_CLEAR_RX;
+
+    // enable data gate
+    *GPCLR0(g) = (1 << 22);
+
+    for (ri = 0; ri < deviceContext->currRowCount; ri++)
+    {
+        KeAcquireSpinLock(&deviceContext->frameLock, &Irql1);
+
+        frame = deviceContext->currFrame;
+        ledCount = deviceContext->currLedCount[ri];
+
+        if (frame == NULL)
+        {
+            KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
+            return TRUE;
+        }
+
+        ULONG* row = frame + ri * GNKSPL_MAX_LED_COUNT;
+        ULONG gpio = 1 << (23 + ri);
+
+        // enable clock gate
+        *GPCLR0(g) = gpio;
+
+        // start frame
+        for (bi = 0; bi < 4; bi++)
+        {
+            *fifo = 0;
+
+            t1 = 100000;
+            while ((!(*cs & CS_TXD)) && (--t1));
+            if (t1 == 0)
+                break;
+        }
+
+        *cs = CS_TA | CS_CLEAR_RX;
+
+        // LED frames
+        if (t1 > 0) for (li = 0; li < ledCount; li++)
+        {
+            ULONG led = row[li];
+            BYTE d[4] = { 0xFF,
+                (led >> 0) & 0xFF,
+                (led >> 16) & 0xFF,
+                (led >> 8) & 0xFF
+            };
+
+            for (bi = 0; bi < 4; bi++)
+            {
+                *fifo = d[bi];
+
+                t1 = 100000;
+                while ((!(*cs & CS_TXD)) && (--t1));
+                if (t1 == 0)
+                    break;
+            }
+
+            *cs = CS_TA | CS_CLEAR_RX;
+
+            if (t1 == 0)
+                break;
+        }
+
+        // END frame
+        if (t1 > 0) for (bi = 0; bi < 4; bi++)
+        {
+            *fifo = 0xFF;
+
+            t1 = 100000;
+            while ((!(*cs & CS_TXD)) && (--t1));
+            if (t1 == 0)
+                break;
+        }
+
+        *cs = CS_TA | CS_CLEAR_RX;
+
+        t2 = 100000;
+        while ((!(*cs & CS_DONE)) && (--t2));
+        if (t2 == 0)
+            break;
+
+        *GPSET0(g) = gpio;
+
+        KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
+    }
+
+    if (t1 == 0)
+        Err("TXD hang  bi %d  CS %08X", bi, *R_CS(b));
+
+    if (t2 == 0)
+        Err("DONE hang  CS %08X", *R_CS(b));
+
+    // disable data gate
+    *GPSET0(g) = (1 << 22);
+
+    *cs = CS_CLEAR_TX | CS_CLEAR_RX;
+
+    return t1 == 0;
+}
+
+VOID
+gnkspiClearDotstar(
+    _In_  PDEVICE_CONTEXT deviceContext
+    )
+{
+    KIRQL Irql1;
+    LONG ledCount;
+    ULONG* b = deviceContext->regVirt;
+    ULONG* g = deviceContext->gpioVirt;
+    int t1 = 0, t2 = 0;
+    LONG li, bi = 0;    // led, byte indices
+    volatile ULONG* fifo = R_FIFO(b);
+    volatile ULONG* cs = R_CS(b);
+    int s = 0;
+
+    Tr4("");
+
+    KeAcquireSpinLock(&deviceContext->frameLock, &Irql1);
+
+    ledCount = GNKSPL_MAX_LED_COUNT;
+
+    *cs = CS_CLEAR_TX | CS_CLEAR_RX;
+    *cs = CS_TA | CS_CLEAR_TX | CS_CLEAR_RX;
+
+    // enable all gates
+    ULONG gpio = (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25);
+    *GPCLR0(g) = gpio;
+
+    // start frame
+    for (bi = 0; bi < 4; bi++)
+    {
+        *fifo = 0;
+        s++;
+
+        t1 = 100000;
+        while ((!(*cs & CS_TXD)) && (--t1));
+        if (t1 == 0)
+            break;
+    }
+
+    *cs = CS_TA | CS_CLEAR_RX;
+
+    // LED frames
+    if (t1 > 0) for (li = 0; li < ledCount; li++)
+    {
+        BYTE d[4] = { 0xFF, 0, 0, 0 };
+
+        for (bi = 0; bi < 4; bi++)
+        {
+            *fifo = d[bi];
+            s++;
+
+            t1 = 100000;
+            while ((!(*cs & CS_TXD)) && (--t1));
+            if (t1 == 0)
+                break;
+        }
+
+        *cs = CS_TA | CS_CLEAR_RX;
+
+        if (t1 == 0)
+            break;
+    }
+
+    // END frame
+    if (t1 > 0)  for (bi = 0; bi < 4; bi++)
+    {
+        *fifo = 0xFF;
+        s++;
+
+        t1 = 100000;
+        while ((!(*cs & CS_TXD)) && (--t1));
+        if (t1 == 0)
+            break;
+    }
+
+    *cs = CS_TA | CS_CLEAR_RX;
+
+    t2 = 100000;
+    while ((!(*cs & CS_DONE)) && (--t2));
+
+    KeReleaseSpinLock(&deviceContext->frameLock, Irql1);
+
+    if (t1 == 0)
+        Err("TXD hang  s %d  bi %d  CS %08X", s, bi, *R_CS(b));
+
+    if (t2 == 0)
+        Err("DONE hang  s %d  CS %08X", s, *R_CS(b));
+
+    *GPSET0(g) = gpio;
 
     *cs = CS_CLEAR_TX | CS_CLEAR_RX;
 }

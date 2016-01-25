@@ -76,7 +76,7 @@ static int cmdLineParser(int argc, char **argv)
         TCLAP::ValueArg<int> device("d", "device", "Device index", false, -1, "index", cmdline);
         TCLAP::ValueArg<int> property("p", "property", "Persistent property index", false, -1, "index", cmdline);
         TCLAP::ValueArg<std::string> output("o", "output", "Output file", false, "", "File name", cmdline);
-        TCLAP::UnlabeledValueArg<std::string> command("command", "Action to exec:  list, show, stop", true, "", "Action", cmdline);
+        TCLAP::UnlabeledValueArg<std::string> command("command", "Action to exec:  list, get, show, stop", true, "", "Action", cmdline);
         TCLAP::UnlabeledValueArg<std::string> file("file", "File name", false, "", "File name", cmdline);
 
         // Parse the argv array.
@@ -107,6 +107,34 @@ int doList()
     for (uint32_t i = 0; i < dev_list.size(); i++)
     {
         std::cout << i << ": " << dev_list[i] << std::endl;
+    }
+
+    return 0;
+}
+
+int doGet()
+{
+    int rc = 0;
+
+    std::cout << "Get hardware type" << std::endl;
+
+    if (optDevice >= 0)
+    {
+        GNKSPI_HW hw = { sizeof(GNKSPI_HW) };
+        USHORT r;
+ 
+        rc = doIoctl(optDevice, IOCTL_GNKSPI_GET_HW, &hw, sizeof(hw));
+
+        if (rc == ERROR_SUCCESS) {
+            std::cout << " refresh: " << hw.refreshUnit << std::endl;
+            std::cout << " hw type: " << hw.hwType << std::endl;
+            std::cout << "led type: " << hw.ledType << std::endl;
+            std::cout << " row cnt: " << hw.rowCount << std::endl;
+            for (r = 0; r < hw.rowCount; r++) {
+                std::cout << " led cnt: " << hw.ledCount[r] << std::endl;
+            }
+        }
+
     }
 
     return 0;
@@ -212,6 +240,10 @@ int main(int argc, char **argv)
     if (!optCommand.compare("list"))
     {
         rc = doList();
+    }
+    if (!optCommand.compare("get"))
+    {
+        rc = doGet();
     }
     else if (!optCommand.compare("show"))
     {

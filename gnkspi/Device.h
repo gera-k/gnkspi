@@ -131,6 +131,9 @@ typedef struct _DEVICE_CONTEXT
 
     WDFTIMER refreshTimer;
 
+    // attatched hardware info
+    GNKSPI_HW hw;
+
     // show info
     WDFMEMORY showStream;           // show sequence
     BYTE showRefreshPeriod;        // in GNKSPL_REFRESH_UNIT
@@ -147,7 +150,6 @@ typedef struct _DEVICE_CONTEXT
 
     // current frame info
     ULONG* currFrame;       // points to current frame to show
-//    BYTE currRow;
     BYTE currRowCount;
     BYTE currLedCount[GNKSPL_MAX_ROW_COUNT];
     ULONG showFrame1[GNKSPL_MAX_ROW_COUNT * GNKSPL_MAX_LED_COUNT];
@@ -162,6 +164,11 @@ typedef struct _DEVICE_CONTEXT
 // in a type safe manner.
 //
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(DEVICE_CONTEXT, DeviceGetContext)
+
+NTSTATUS
+gnkspiDetectHardware(
+    _In_ PDEVICE_CONTEXT deviceContext
+    );
 
 //
 // Function to initialize the device and its callbacks
@@ -210,5 +217,24 @@ gnkspiClear(
     _In_  PDEVICE_CONTEXT deviceContext
     );
     
+BOOLEAN
+gnkspiRefreshNeopixel(
+    _In_  PDEVICE_CONTEXT deviceContext
+    );
+
+VOID
+gnkspiClearNeopixel(
+    _In_  PDEVICE_CONTEXT deviceContext
+    );
+
+BOOLEAN
+gnkspiRefreshDotstar(
+    _In_  PDEVICE_CONTEXT deviceContext
+    );
+
+VOID
+gnkspiClearDotstar(
+    _In_  PDEVICE_CONTEXT deviceContext
+    );
     
 EXTERN_C_END

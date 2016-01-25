@@ -295,6 +295,101 @@ Return Value:
         break;
     }
 
+    case IOCTL_GNKSPI_GET_HW:
+    {
+        PGNKSPI_HW outHw;
+        size_t outLength;
+
+        Tr1("IOCTL_GNKSPI_GET_HW");
+
+        status = WdfRequestRetrieveOutputBuffer(	// retrieves an I/O request's input buffer
+            Request,                // IN WDFREQUEST  Request,
+            sizeof(GNKSPI_HW),      // IN size_t  MinimumRequiredSize,
+            (PVOID*)&outHw,         // OUT PVOID*  Buffer,
+            &outLength              // OUT size_t*  Length
+            );
+        if (!NT_SUCCESS(status)) {
+            Err("WdfRequestRetrieveOutputBuffer failed; status 0x%X", status);
+            break;
+        }
+
+        status = gnkspiDetectHardware(deviceContext);
+        if (!NT_SUCCESS(status)) {
+            Err("gnkspiDetectHardware failed; status 0x%X", status);
+            break;
+        }
+
+        outLength = sizeof(GNKSPI_HW);
+        RtlCopyMemory(outHw, &deviceContext->hw, outLength);
+
+        WdfRequestCompleteWithInformation(Request, status, outLength);
+
+        return;
+    }
+
+    case IOCTL_GNKSPI_SET_HW:
+    {
+        PGNKSPI_HW inHw;
+        size_t inLength;
+        USHORT r;
+
+        Tr1("IOCTL_GNKSPI_SET_HW");
+
+        status = WdfRequestRetrieveInputBuffer(	// retrieves an I/O request's input buffer
+            Request,                // IN WDFREQUEST  Request,
+            sizeof(GNKSPI_HW),      // IN size_t  MinimumRequiredSize,
+            (PVOID*)&inHw,          // OUT PVOID*  Buffer,
+            &inLength               // OUT size_t*  Length
+            );
+        if (!NT_SUCCESS(status))
+        {
+            Err("WdfRequestRetrieveInputBuffer failed; status 0x%X", status);
+            break;
+        }
+
+        if (inHw->size < sizeof(GNKSPI_HW)) {
+            Err("Invalid structure size");
+            status = STATUS_INVALID_BUFFER_SIZE;
+            break;
+        }
+
+        if (inHw->hwType <= GNKSPI_HW_UNKNOWN || inHw->hwType >= GNKSPI_HW_MAX) {
+            Err("Invalid hardware type");
+            status = STATUS_INVALID_PARAMETER;
+            break;
+        }
+
+        if (inHw->ledType <= GNKSPI_LED_UNKNOWN || inHw->hwType >= GNKSPI_LED_MAX) {
+            Err("Invalid LED type");
+            status = STATUS_INVALID_PARAMETER;
+            break;
+        }
+
+        if (inHw->rowCount > GNKSPL_MAX_ROW_COUNT) {
+            Err("Invalid ROW count");
+            status = STATUS_INVALID_PARAMETER;
+            break;
+        }
+
+        for (r = 0; r < inHw->rowCount; r++) {
+            if (inHw->ledCount[r] > GNKSPL_MAX_LED_COUNT) {
+                Err("Invalid LED count in row %d", r);
+                status = STATUS_INVALID_PARAMETER;
+                break;
+            }
+        }
+        if (!NT_SUCCESS(status))
+            break;
+
+        inHw->refreshUnit = GNKSPL_REFRESH_UNIT;
+
+        RtlCopyMemory(&deviceContext->hw, inHw, sizeof(GNKSPI_HW));
+
+        WdfRequestCompleteWithInformation(Request, status, sizeof(GNKSPI_HW));
+
+        return;
+    }
+
     default:
         Err("Invalid IOCTL 0x%X", IoControlCode);
         status = STATUS_INVALID_DEVICE_REQUEST;

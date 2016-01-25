@@ -1,4 +1,5 @@
 /********************************************************************************
+
 The MIT License(MIT)
 
 Copyright(c) 2015 Gera Kazakov
@@ -51,7 +52,7 @@ DEFINE_GUID (GUID_DEVINTERFACE_gnkspi,
 #define GNKSPL_REFRESH_UNIT 10      // milliseconds
 #define GNKSPL_MAX_STEP_COUNT 128
 #define GNKSPL_MAX_ROW_COUNT 4
-#define GNKSPL_MAX_LED_COUNT 64
+#define GNKSPL_MAX_LED_COUNT 256
 
 #define IOCTL_GNKSPI(_func_)	CTL_CODE( 'gn', 0x0900+_func_, METHOD_BUFFERED, FILE_READ_DATA | FILE_WRITE_DATA )
 
@@ -125,6 +126,61 @@ typedef enum _GNKSPI_FRAME_FORMAT
 // output - show stream
 #define IOCTL_GNKSPI_CLR_SHOW  IOCTL_GNKSPI(0x03)
 
+typedef enum _GNKSPI_HW_TYPE
+{
+    GNKSPI_HW_UNKNOWN = 0,
+    GNKSPI_HW_LIGHTSTAR,
+    GNKSPI_HW_LEDPANEL,
+
+    GNKSPI_HW_MAX
+} GNKSPI_HW_TYPE;
+
+typedef enum _GNKSPI_LED_TYPE
+{
+    GNKSPI_LED_UNKNOWN = 0,
+    GNKSPI_LED_NEOPIXEL,
+    GNKSPI_LED_DOTSTAR,
+
+    GNKSPI_LED_MAX
+} GNKSPI_LED_TYPE;
+
+typedef struct _GNKSPI_HW
+{
+    ULONG size;                             // size of this structure
+    USHORT refreshUnit;                     // refresh unit
+    GNKSPI_HW_TYPE hwType;                  // hardware config type
+    GNKSPI_LED_TYPE ledType;                // led type used
+    USHORT rowCount;                        // number of rows
+    USHORT ledCount[GNKSPL_MAX_ROW_COUNT];  // leds per row
+} GNKSPI_HW, *PGNKSPI_HW;
+
+// known HW configurations
+static inline void GNKSPI_HW_CONFIG_LIGHTSTAR(PGNKSPI_HW hw)
+{
+    hw->hwType = GNKSPI_HW_LIGHTSTAR;
+    hw->ledType = GNKSPI_LED_NEOPIXEL;
+    hw->rowCount = 4;
+    hw->ledCount[0] =
+    hw->ledCount[1] =
+    hw->ledCount[2] =
+    hw->ledCount[3] = 60;
+}
+
+static inline void GNKSPI_HW_CONFIG_LEDPANEL(PGNKSPI_HW hw)
+{
+    hw->hwType = GNKSPI_HW_LEDPANEL;
+    hw->ledType = GNKSPI_LED_DOTSTAR;
+    hw->rowCount = 1;
+    hw->ledCount[0] = 240;
+}
+
+// IOCTL_GNKSPI_GET_HW - get hardware properties
+// input - GNKSPI_HW
+#define IOCTL_GNKSPI_GET_HW  IOCTL_GNKSPI(0x04)
+
+// IOCTL_GNKSPI_SET_HW - set hardware properties
+// output - GNKSPI_HW
+#define IOCTL_GNKSPI_SET_HW  IOCTL_GNKSPI(0x05)
 
 // {EEF50AC7-31A6-48F5-8EC9-4D9267C35458} - Property category
 DEFINE_DEVPROPKEY(gnkspiShow0, 0xeef50ac7, 0x31a6, 0x48f5, 0x8e, 0xc9, 0x4d, 0x92, 0x67, 0xc3, 0x54, 0x58, 2);
