@@ -178,9 +178,62 @@ void Stop(const FunctionCallbackInfo<Value>& args)
     args.GetReturnValue().Set(rc);
 }
 
+void Get(const FunctionCallbackInfo<Value>& args)
+{
+    Isolate* isolate = args.GetIsolate();
+    int dev = -1;
+
+    if (args.Length() < 1) {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Wrong number of arguments")));
+        return;
+    }
+
+    if (!args[0]->IsInt32()) {
+        isolate->ThrowException(Exception::TypeError(
+            String::NewFromUtf8(isolate, "Wrong type of argument 0")));
+        return;
+    }
+
+    dev = args[1]->Int32Value();
+
+    if (optVerbose)
+        Msg("Get HW info on device %d", dev);
+
+    GNKSPI_HW hw = { sizeof(GNKSPI_HW) };
+
+    int rc = doIoctl(dev, IOCTL_GNKSPI_GET_HW, &hw, sizeof(hw));
+
+    if (rc >= sizeof(GNKSPI_HW)) {
+        char buf[1024];
+        char*p = buf;
+        int r;
+
+        p += sprintf(p, "{");
+        p += sprintf(p, "\"refreshUnit\":%d,", hw.refreshUnit);
+        p += sprintf(p, "\"hwType\":%d,", hw.hwType);
+        p += sprintf(p, "\"ledType\":%d,", hw.ledType);
+        p += sprintf(p, "\"rowCount\":%d,", hw.rowCount);
+        p += sprintf(p, "\"ledCount\":[");
+
+        for (r = 0; r < hw.rowCount; r++) {
+            p += sprintf(p, "%d", hw.ledCount[r]);
+            if (r < hw.rowCount - 1)
+                p += sprintf(p, ",");
+        }
+        p += sprintf(p, "]}");
+
+        args.GetReturnValue().Set(String::NewFromUtf8(isolate, buf));
+    }
+    else {
+        args.GetReturnValue().Set(rc);
+    }
+}
+
 void Init(Local<Object> exports) {
     NODE_SET_METHOD(exports, "show", Show);
     NODE_SET_METHOD(exports, "stop", Stop);
+    NODE_SET_METHOD(exports, "get", Get);
 }
 
 NODE_MODULE(addon, Init)

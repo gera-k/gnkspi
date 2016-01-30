@@ -38,6 +38,8 @@ class LightStar extends Show {
 
     constructor(refresh: number) {
         super(refresh);
+        this.defaultRowCount = 4;
+        this.defaultLedCount = 60;
     }
 
     setLed(frame: number, ray: number, led: number, color: string) {

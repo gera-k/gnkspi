@@ -39,14 +39,14 @@ interface Options {
 }
 
 class Show {
-    static defaultRowCount = 4;
-    static defaultLedCount = 60;
+    defaultRowCount: number;
+    defaultLedCount: number;
 
-    static defaultOptions: Options = {
+    defaultOptions: Options = {
         duration: 1,
         repeat: 1,
-        rowCount: Show.defaultRowCount,
-        ledCount: Show.defaultLedCount
+        rowCount: this.defaultRowCount,
+        ledCount: this.defaultLedCount
     };
 
     protected show: {
@@ -54,15 +54,15 @@ class Show {
         frame: Array<Object>
     };
 
-    private static newFrame(format: Format, options) {
+    private newFrame(format: Format, options) {
         if (typeof options.duration === 'undefined')
             options.duration = 1;
         if (typeof options.repeat === 'undefined')
             options.repeat = 1;
         if (typeof options.rowCount === 'undefined')
-            options.rowCount = Show.defaultRowCount;
+            options.rowCount = this.defaultRowCount;
         if (typeof options.ledCount === 'undefined')
-            options.ledCount = Show.defaultLedCount;
+            options.ledCount = this.defaultLedCount;
 
         var frame = {
             "format": Format[format],
@@ -94,9 +94,9 @@ class Show {
     // add zero-filled base frame
     //  with rows formatted as array
     //  returns frame index
-    addBaseFrame(options:Options = Show.defaultOptions): number {
+    addBaseFrame(options:Options = this.defaultOptions): number {
 
-        var frame = Show.newFrame(Format.base, options);
+        var frame = this.newFrame(Format.base, options);
 
         for (var r = 0; r < options.rowCount; r++) {
             var row = Array<string>(options.ledCount);
@@ -113,9 +113,9 @@ class Show {
     // add zero-filled update frame
     //  with rows formatted as array
     //  returns frame index
-    addUpdateFrame(options:Options = Show.defaultOptions): number {
+    addUpdateFrame(options: Options = this.defaultOptions): number {
 
-        var frame = Show.newFrame(Format.update, options);
+        var frame = this.newFrame(Format.update, options);
 
         for (var r = 0; r < options.rowCount; r++) {
             var row = Array<string>(options.ledCount);
@@ -132,9 +132,9 @@ class Show {
     // add zero-filled transition frame
     //  with rows formatted as array
     //  returns frame index
-    addTransitionFrame(options:Options = Show.defaultOptions): number {
+    addTransitionFrame(options: Options = this.defaultOptions): number {
 
-        var frame = Show.newFrame(Format.transition, options);
+        var frame = this.newFrame(Format.transition, options);
 
         for (var r = 0; r < options.rowCount; r++) {
             var row = Array<string>(options.ledCount);
@@ -155,9 +155,9 @@ class Show {
     //      repeat: 1
     //      rowCount: defaultRowCount
     //      ledCount: defaultLedCount
-    addSingleColorFrame(led: string, options:Options = Show.defaultOptions) {
+    addSingleColorFrame(led: string, options: Options = this.defaultOptions) {
 
-        var frame = Show.newFrame(Format.base, options);
+        var frame = this.newFrame(Format.base, options);
 
         for (var r = 0; r < options.rowCount; r++) {
             var range = {};

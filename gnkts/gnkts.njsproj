@@ -6,8 +6,7 @@
     <Name>gnkts</Name>
     <RootNamespace>gnkts</RootNamespace>
     <Environment>GNK_DEBUG=YES</Environment>
-    <ScriptArguments>
-    </ScriptArguments>
+    <ScriptArguments>txt Hello "#202020" "#008000" World "#101010" "#00F000"</ScriptArguments>
     <NodeExePath>C:\Program Files (x86)\Nodejs-5\node.exe</NodeExePath>
     <NodeExeArguments>--harmony_default_parameters</NodeExeArguments>
     <DebuggerPort>
@@ -19,7 +18,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>2ca86b1d-7cc1-4eec-9f79-7d133aa4058c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>server.js</StartupFile>
+    <StartupFile>test.js</StartupFile>
     <StartWebBrowser>True</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -27,7 +26,7 @@
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <NodejsPort>1337</NodejsPort>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
@@ -54,6 +53,7 @@
     <Content Include="show\wave3.json" />
     <TypeScriptCompile Include="GnkSpi.ts" />
     <TypeScriptCompile Include="Gradient.ts" />
+    <TypeScriptCompile Include="LedPanel.ts" />
     <TypeScriptCompile Include="LightStar.ts" />
     <TypeScriptCompile Include="ColorUtil.ts" />
     <TypeScriptCompile Include="Scripts\typings\tsd.d.ts" />

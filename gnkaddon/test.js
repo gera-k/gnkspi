@@ -91,6 +91,9 @@ process.argv.forEach(function (val, index, array) {
 
     if (val == 'stop')
         console.log('Stop:', addon.stop(0));
+
+    if (val == 'get')
+        console.log('Get:', addon.get(0));
 });
 
 
